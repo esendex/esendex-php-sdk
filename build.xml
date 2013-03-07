@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="EsendexSDK" default="test" phingVersion="2.4.2">
+    <target name="check-access"
+            depends="install_dependencies"
+            description="Validate your credentials">
+        <input propertyName="username" message="Esendex Username " promptChar="?"/>
+        <input propertyName="password" message="Esendex Password " promptChar="?"/>
+        <input propertyName="reference" message="Account Reference" promptChar="?"/>
+        <check-access username="${username}" password="${password}" reference="${reference}"/>
+    </target>
+
+    <target name="test"
+            depends="install_dev_dependencies, prepare"
+            description="Run all the tests">
+        <exec executable="./vendor/bin/phpunit" dir="." checkreturn="true" logoutput="true">
+            <arg line="--log-junit"/>
+            <arg file="./build/TestResult.xml"/>
+            <arg line="./test/"/>
+        </exec>
+    </target>
+
+    <target name="package"
+            depends="build"
+            description="Package build output">
+        <load-version prefix="versions"/>
+
+        <exec executable="php" dir="./build" checkreturn="true">
+            <arg file="./pear_generator.php"/>
+            <arg line="make"/>
+        </exec>
+
+        <echo message="Creating packages..."/>
+
+        <echo message="Building PEAR package"/>
+        <exec executable="pear" dir="./build" checkreturn="true">
+            <arg line="package"/>
+        </exec>
+
+        <tar destfile="./build/esendex-php-sdk-${versions.version}.tgz" compression="gzip">
+            <fileset dir="./build">
+                <include name="**"/>
+                <exclude name="*.tgz"/>
+                <exclude name="TestResult.xml"/>
+                <exclude name="package.xml"/>
+            </fileset>
+        </tar>
+
+        <echo message="Files copied and compressed in build directory OK!"/>
+
+        <echo message="Tidying up build directory"/>
+
+        <delete includeemptydirs="true">
+            <fileset dir="./build">
+                <include name="**"/>
+                <exclude name="*.tgz"/>
+                <exclude name="TestResult.xml"/>
+                <exclude name="package.xml"/>
+            </fileset>
+        </delete>
+    </target>
+
+    <target name="install_dependencies">
+        <exec executable="php" dir="." checkreturn="true">
+            <arg line="composer.phar install"/>
+        </exec>
+    </target>
+
+    <target name="install_dev_dependencies">
+        <exec executable="php" dir="." checkreturn="true">
+            <arg line="composer.phar install --dev"/>
+        </exec>
+    </target>
+
+    <target name="prepare">
+        <delete dir="./build"/>
+        <echo message="Making directory ./build"/>
+        <mkdir dir="./build"/>
+    </target>
+
+    <target name="build" depends="test">
+        <copy todir="./build/">
+            <fileset dir="./">
+                <include name="test/**"/>
+                <exclude name="*"/>
+            </fileset>
+            <filelist dir="./" files="build.xml,composer.json,composer.phar,phing-latest.phar"/>
+        </copy>
+        <mkdir dir="./build/Esendex"/>
+        <copy todir="./build/Esendex">
+            <fileset dir="./src">
+                <include name="**"/>
+            </fileset>
+        </copy>
+    </target>
+
+    <adhoc-task name="load-version">
+        <![CDATA[
+                class LoadVersionTask extends Task
+                {
+                    private $prefix = "version";
+
+                    function setPrefix($prefix)
+                    {
+                        $this->prefix = $prefix;
+                    }
+
+                    function init()
+                    {
+                        require_once $this->project->getProperty("project.basedir") . "/vendor/autoload.php";
+                    }
+
+                    function main()
+                    {
+                        $this->project->setProperty($this->prefix . ".version",
+                                                    \Esendex\Model\Api::getVersion());
+                        $this->project->setProperty($this->prefix . ".apiversion",
+                                                    \Esendex\Model\Api::getApiVersion());
+                    }
+                }
+        ]]>
+    </adhoc-task>
+
+    <adhoc-task name="check-access">
+        <![CDATA[
+                class CheckAccessTask extends Task
+                {
+                    private $username;
+                    private $password;
+                    private $reference;
+
+                    function setUsername($value)
+                    {
+                        $this->username = (string)$value;
+                    }
+
+                    function setPassword($value)
+                    {
+                        $this->password = (string)$value;
+                    }
+
+                    function setReference($value)
+                    {
+                        $this->reference = (string)$value;
+                    }
+
+                    function init()
+                    {
+                        require_once $this->project->getProperty("project.basedir") . "/vendor/autoload.php";
+                    }
+
+                    function main()
+                    {
+                        if (strlen($this->username) == 0 ||
+                            strlen($this->password) == 0 ||
+                            strlen($this->reference) == 0) {
+                            print "\n\tCould not check access, need to provide Username, Password and Account Reference\n";
+                            return;
+                        }
+                        $service = new \Esendex\CheckAccessService();
+                        if ($service->checkAccess($this->reference, $this->username, $this->password)) {
+                            print "\n\tAccount credentials OK!\n";
+                            return;
+                        }
+                        print "\n\tCould not validate your credentials, check your input and retry\n";
+                    }
+                }
+        ]]>
+    </adhoc-task>
+</project>

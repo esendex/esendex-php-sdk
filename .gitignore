@@ -1,0 +1,6 @@
+.idea/
+
+/vendor/
+/build/
+package.xml
+*.tgz
