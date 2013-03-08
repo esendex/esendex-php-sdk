@@ -36,7 +36,8 @@ $package->setOptions(
         'clearcontents' => true,
         'dir_roles' => array(
             '/Esendex' => 'php',
-            '/test' => 'test'
+            '/test' => 'test',
+            '/' => 'doc'
         ),
         'ignore' => array(
             'TestResult.xml',
@@ -55,8 +56,9 @@ $package->setNotes($releaseNotes);
 $package->setChannel('esendex.github.com/pear');
 $package->setPackageType('php');
 $package->setLicense(
-    'TODO',
-    'http://example.com/licence'
+    'BSD-3-Clause',
+    false,
+    "LICENSE"
 );
 
 $package->addMaintainer(
