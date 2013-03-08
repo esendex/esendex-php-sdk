@@ -53,9 +53,4 @@ abstract class AbstractAuthentication implements IAuthentication
     {
         return $this->accountReference;
     }
-
-    /**
-     * @return string
-     */
-    public abstract function getEncodedValue();
 }
