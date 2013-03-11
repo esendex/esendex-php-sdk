@@ -64,6 +64,10 @@
                 <exclude name="TestResult.xml"/>
             </fileset>
         </delete>
+		
+		<exec executable="git" dir="./build" checkreturn="true">
+            <arg line="rev-parse HEAD >version.info"/>
+        </exec>
     </target>
 
     <target name="install_dependencies">
