@@ -35,15 +35,22 @@
         <exec executable="pear" dir="./build" checkreturn="true">
             <arg line="package"/>
         </exec>
+        <move todir="./build/pear">
+            <fileset dir="./build">
+                <include name="package.xml"/>
+                <include name="*.tgz"/>
+            </fileset>
+        </move>
 
-        <tar destfile="./build/esendex-php-sdk-${versions.version}.tgz" compression="gzip">
+		<property name="gzip.file" value="esendex-php-sdk-${versions.version}.tgz"/>
+        <tar destfile="./build/${gzip.file}" compression="gzip">
             <fileset dir="./build">
                 <include name="**"/>
-                <exclude name="*.tgz"/>
                 <exclude name="TestResult.xml"/>
-                <exclude name="package.xml"/>
+                <exclude name="pear/**"/>
             </fileset>
         </tar>
+		<move file="./build/${gzip.file}" tofile="./build/gzip/${gzip.file}"/>
 
         <echo message="Files copied and compressed in build directory OK!"/>
 
@@ -52,9 +59,9 @@
         <delete includeemptydirs="true">
             <fileset dir="./build">
                 <include name="**"/>
-                <exclude name="*.tgz"/>
+                <exclude name="gzip/**"/>
+                <exclude name="pear/**"/>
                 <exclude name="TestResult.xml"/>
-                <exclude name="package.xml"/>
             </fileset>
         </delete>
     </target>
