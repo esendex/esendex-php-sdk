@@ -24,12 +24,12 @@
             description="Package build output">
         <load-version prefix="versions"/>
 
+        <echo message="Creating packages..."/>
+
         <exec executable="php" dir="./build" checkreturn="true">
             <arg file="./pear_generator.php"/>
             <arg line="make"/>
         </exec>
-
-        <echo message="Creating packages..."/>
 
         <echo message="Building PEAR package"/>
         <exec executable="pear" dir="./build" checkreturn="true">
@@ -42,15 +42,21 @@
             </fileset>
         </move>
 
-		<property name="gzip.file" value="esendex-php-sdk-${versions.version}.tgz"/>
-        <tar destfile="./build/${gzip.file}" compression="gzip">
+        <copy todir="./build/src">
+            <fileset dir="./build/Esendex">
+                <include name="**"/>
+            </fileset>
+        </copy>
+        <delete dir="./build/Esendex" includeemptydirs="true" failonerror="true"/>
+        <property name="gzip.file" value="esendex-php-sdk-${versions.version}.tgz"/>
+        <tar destfile="./build/${gzip.file}" prefix="esendex-php-sdk" compression="gzip">
             <fileset dir="./build">
                 <include name="**"/>
                 <exclude name="TestResult.xml"/>
                 <exclude name="pear/**"/>
             </fileset>
         </tar>
-		<move file="./build/${gzip.file}" tofile="./build/gzip/${gzip.file}"/>
+        <move file="./build/${gzip.file}" tofile="./build/gzip/${gzip.file}"/>
 
         <echo message="Files copied and compressed in build directory OK!"/>
 
@@ -64,8 +70,8 @@
                 <exclude name="TestResult.xml"/>
             </fileset>
         </delete>
-		
-		<exec executable="git" dir="./build" checkreturn="true">
+        
+        <exec executable="git" dir="./build" checkreturn="true">
             <arg line="rev-parse HEAD >version.info"/>
         </exec>
     </target>
