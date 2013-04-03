@@ -46,7 +46,7 @@ require_once 'path/to/downloaded/Esendex/autoload.php';
 
 ## Getting Started
 
-#### SMS Sending
+#### Sending SMS
 ```php5
 $message = new \Esendex\Model\DispatchMessage(
     "WebApp", // Send from
@@ -55,7 +55,9 @@ $message = new \Esendex\Model\DispatchMessage(
     \Esendex\Model\Message::SmsType
 );
 $authentication = new \Esendex\Authentication\LoginAuthentication(
-    "EX000000", "user@example.com", "secret"
+    "EX000000", // Your Esendex Account Reference
+    "user@example.com", // Your login email address
+    "password" // Your password
 );
 $service = new \Esendex\DispatchService($authentication);
 $result = $service->send($message);
@@ -67,7 +69,9 @@ print $result->uri();
 #### Retrieving Inbox Messages
 ```php5
 $authentication = new \Esendex\Authentication\LoginAuthentication(
-    "EX000000", "user@example.com", "secret"
+    "EX000000", // Your Esendex Account Reference
+    "user@example.com", // Your login email address
+    "password" // Your password
 );
 $service = new \Esendex\InboxService($authentication);
 
@@ -79,12 +83,25 @@ foreach ($result as $message) {
     print "Message from: {$message->originator()}, {$message->summary()}";
 }
 ```
+#### Track Message Status
+```php5
+$authentication = new \Esendex\Authentication\LoginAuthentication(
+    "EX000000", // Your Esendex account reference
+    "user@example.com", // Your login email
+    "password" // Your password
+);
+$headerService = new \Esendex\MessageHeaderService($authentication);
+$message = $headerService->message("messageId");
+print_r($message->status());
+```
 
 #### Retrieving Full Message Body
 ```php5
 $messageId = "unique-id-of-message";
 $authentication = new \Esendex\Authentication\LoginAuthentication(
-    "EX000000", "user@example.com", "secret"
+    "EX000000", // Your Esendex Account Reference
+    "user@example.com", // Your login email address
+    "password" // Your password
 );
 $service = new \Esendex\MessageBodyService($authentication);
 
