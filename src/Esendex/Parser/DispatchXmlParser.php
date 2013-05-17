@@ -58,16 +58,16 @@ class DispatchXmlParser
             throw new ArgumentException("Validity too long, must be less or equal to than 72");
 
         $doc = new \SimpleXMLElement("<?xml version=\"1.0\" encoding=\"utf-8\"?><messages />", 0, false, Api::NS);
-        $doc->addChild("accountreference", $this->reference);
+        $doc->accountreference = $this->reference;
         $child = $doc->addChild("message");
-        $child->addChild("from", $message->originator());
-        $child->addChild("to", $message->recipient());
-        $child->addChild("body", $message->body());
-        $child->addChild("type", Message::SmsType);
+        $child->from = $message->originator();
+        $child->to = $message->recipient();
+        $child->body = $message->body();
+		$child->type = Message::SmsType;
         if ($message->validityPeriod() > 0)
-            $child->addChild("validity", $message->validityPeriod());
+            $child->validity = $message->validityPeriod();
         if ($message->language() != null)
-            $child->addChild("lang", $message->language());
+            $child->lang = $message->language();
 
         return $doc->asXML();
     }

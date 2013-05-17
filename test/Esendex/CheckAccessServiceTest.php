@@ -104,6 +104,27 @@ XML;
     /**
      * @test
      */
+    function checkAccessInputCaseMismatchWithResponseCase()
+    {
+        $this->httpUtil
+            ->expects($this->once())
+            ->method("get")
+            ->with(
+            $this->equalTo(
+                "https://api.esendex.com/v1.0/accounts"
+            ),
+            $this->isInstanceOf("\\Esendex\\Authentication\\LoginAuthentication")
+        )
+            ->will($this->returnValue(self::ACCOUNTS_RESPONSE_XML));
+
+        $result = $this->service->checkAccess(strtolower($this->reference), $this->username, $this->password);
+
+        $this->assertTrue($result);
+    }
+
+    /**
+     * @test
+     */
     function checkAccessAccountReferenceNotAccessible()
     {
         $this->httpUtil

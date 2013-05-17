@@ -144,6 +144,25 @@ XML;
     /**
      * @test
      */
+    function encodeMessageBodyContainsAmpersand()
+    {
+        $reference = "EX123456";
+        $message = new DispatchMessage(
+            "4412345678",
+            "4487654321",
+            "This & That",
+            Message::SmsType
+        );
+        $parser = new DispatchXmlParser($reference);
+
+        $result = $parser->encode($message);
+		
+		$this->assertThat($result, $this->stringContains("This &amp; That"));
+    }
+
+    /**
+     * @test
+     */
     function parseMessageResults()
     {
         $parser = new DispatchXmlParser("reference");

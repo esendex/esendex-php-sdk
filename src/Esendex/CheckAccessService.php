@@ -94,10 +94,12 @@ class CheckAccessService
 
             $xml = $this->httpClient->get($uri, $authentication);
             $accounts = new \SimpleXMLElement($xml);
-            $accounts->registerXPathNamespace("api", Model\Api::NS);
-            $result = $accounts->xpath("//api:account[api:reference='{$authentication->accountReference()}']");
-
-            return count($result) > 0;
+            foreach ($accounts->account as $account) {
+                if (strcasecmp($account->reference, $authentication->accountReference()) == 0) {
+                    return true;
+                }
+            }
+            return false;
         } catch (\Exception $e) {
             return false;
         }
