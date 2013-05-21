@@ -51,6 +51,9 @@ class HttpClient implements IHttp
         }
         self::$userAgent = $agent;
         self::$certificateBundle = realpath(dirname(__FILE__) . '/../../ca-bundle.pem');
+        if (empty(self::$certificateBundle)) {
+            echo "WARN: Could not locate CA Bundle. Secure web requests will fail";
+        }
     }
 
     private $isSecure;
@@ -113,9 +116,9 @@ class HttpClient implements IHttp
         \curl_setopt($curlHandle, CURLOPT_CUSTOMREQUEST, $method);
         if ($method == 'PUT' || $method == 'POST') {
             \curl_setopt($curlHandle, CURLOPT_POSTFIELDS, $data);
-			if (strlen($data) == 0) {
-				$httpHeaders[] = 'Content-Length: 0';
-			}
+            if (strlen($data) == 0) {
+                $httpHeaders[] = 'Content-Length: 0';
+            }
         }
         \curl_setopt($curlHandle, CURLOPT_HTTPHEADER, $httpHeaders);
 
@@ -139,51 +142,33 @@ class HttpClient implements IHttp
 
     private function getHttpException($http_code, $error_message = '', array $info = null)
     {
-        $exception = null;
-
         switch ($http_code) {
             case 400:
-                $exception = new BadRequestException($error_message, $http_code, $info);
-                break;
+                return new BadRequestException($error_message, $http_code, $info);
             case 401:
-                $exception = new UnauthorisedException($error_message, $http_code, $info);
-                break;
+                return new UnauthorisedException($error_message, $http_code, $info);
             case 402:
-                $exception = new PaymentRequiredException($error_message, $http_code, $info);
-                break;
+                return new PaymentRequiredException($error_message, $http_code, $info);
             case 403:
-                $exception = new UserCredentialsException($error_message, $http_code, $info);
-                break;
+                return new UserCredentialsException($error_message, $http_code, $info);
             case 404:
-                if ($info != null && array_key_exists('url', $info)) {
-                    $exception = new ResourceNotFoundException($error_message);
-                } else {
-                    $exception = new ResourceNotFoundException($error_message, $http_code, $info);
-                }
-                break;
+                return new ResourceNotFoundException($error_message, $http_code, $info);
             case 405:
-                $exception = new MethodNotAllowedException($error_message, $http_code, $info);
-                break;
+                return new MethodNotAllowedException($error_message, $http_code, $info);
             case 408:
-                $exception = new RequestTimedOutException($error_message, $http_code, $info);
-                break;
+                return new RequestTimedOutException($error_message, $http_code, $info);
             case 500:
-                $exception = new ServerErrorException($error_message, $http_code, $info);
-                break;
+                return new ServerErrorException($error_message, $http_code, $info);
             case 501:
-                $exception = new NotImplementedException($error_message, $http_code, $info);
-                break;
+                return new NotImplementedException($error_message, $http_code, $info);
             case 503:
-                $exception = new ServiceUnavailableException($error_message, $http_code, $info);
-                break;
+                return new ServiceUnavailableException($error_message, $http_code, $info);
             default:
-                echo("Returning generic Exception for http code {$http_code}");
-
-                $exception = new \Exception($error_message, $http_code, $info);
-                break;
+                if (empty($error_message)) {
+                    $error_message = "An unexpected error occurred processing the web request";
+                }
+                return new \Exception($error_message, $http_code);
         }
-
-        return $exception;
     }
 }
 
