@@ -81,6 +81,37 @@ XML;
         $result = $parser->encode($message);
 
         $this->assertEquals($expected, $result);
+    }    
+    
+    /**
+     * @test
+     */
+    function encodeVoiceMessage()
+    {
+        $reference = "EX123456";
+        $message = new DispatchMessage(
+            "4412345678",
+            "4487654321",
+            "Something to say",
+            Message::VoiceType,
+            36,
+            "fr-FR"
+        );
+        $parser = new DispatchXmlParser($reference);
+        $doc = new \SimpleXMLElement("<?xml version=\"1.0\" encoding=\"utf-8\"?><messages />", 0, false, Api::NS);
+        $doc->addChild("accountreference", $reference);
+        $child = $doc->addChild("message");
+        $child->addChild("from", $message->originator());
+        $child->addChild("to", $message->recipient());
+        $child->addChild("body", $message->body());
+        $child->addChild("type", Message::VoiceType);
+        $child->addChild("validity", $message->validityPeriod());
+        $child->addChild("lang", $message->language());
+        $expected = $doc->asXML();
+
+        $result = $parser->encode($message);
+
+        $this->assertEquals($expected, $result);
     }
 
     /**
@@ -156,8 +187,8 @@ XML;
         $parser = new DispatchXmlParser($reference);
 
         $result = $parser->encode($message);
-		
-		$this->assertThat($result, $this->stringContains("This &amp; That"));
+        
+        $this->assertThat($result, $this->stringContains("This &amp; That"));
     }
 
     /**

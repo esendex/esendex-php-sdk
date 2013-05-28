@@ -63,7 +63,7 @@ class DispatchXmlParser
         $child->from = $message->originator();
         $child->to = $message->recipient();
         $child->body = $message->body();
-		$child->type = Message::SmsType;
+		$child->type = $message->type();
         if ($message->validityPeriod() > 0)
             $child->validity = $message->validityPeriod();
         if ($message->language() != null)
