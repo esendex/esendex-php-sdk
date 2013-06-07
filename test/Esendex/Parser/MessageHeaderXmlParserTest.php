@@ -93,11 +93,11 @@ XML;
         );
 
         $this->assertEquals(
-            \DateTime::createFromFormat(MessageHeaderXmlParser::DATE_ISO8601_MILLISECONDS, "2013-03-06T13:18:25.437Z"),
+            \DateTime::createFromFormat(DATE_ISO8601, "2013-03-06T13:18:25Z"),
             $result->submittedAt()
         );
         $this->assertEquals(
-            \DateTime::createFromFormat(MessageHeaderXmlParser::DATE_ISO8601_MILLISECONDS, "2013-03-06T13:19:20.177Z"),
+            \DateTime::createFromFormat(DATE_ISO8601, "2013-03-06T13:19:20Z"),
             $result->sentAt()
         );
         $this->assertEquals(
@@ -159,12 +159,12 @@ XML;
         );
         $this->assertEquals("Every message matters", $result->summary());
         $this->assertEquals(
-            \DateTime::createFromFormat(MessageHeaderXmlParser::DATE_ISO8601_MILLISECONDS, "2013-03-06T14:30:42.407Z"),
+            \DateTime::createFromFormat(DATE_ISO8601, "2013-03-06T14:30:42Z"),
             $result->lastStatusAt()
         );
 
         $this->assertEquals(
-            \DateTime::createFromFormat(MessageHeaderXmlParser::DATE_ISO8601_MILLISECONDS, "2013-03-06T14:30:42.407Z"),
+            \DateTime::createFromFormat(DATE_ISO8601, "2013-03-06T14:30:42Z"),
             $result->receivedAt()
         );
         $this->assertNull($result->readAt());
@@ -176,7 +176,7 @@ XML;
      */
     function parseReadInboundMessage()
     {
-        $readAt = "2013-03-07T15:20:12.908Z";
+        $readAt = "2013-03-07T15:20:12Z";
         $readBy = "support@esendex.com";
         $message = simplexml_load_string(self::INBOX_RESPONSE_XML);
         $message->readat = $readAt;
@@ -187,7 +187,7 @@ XML;
         $result = $parser->parse($message->asXML());
 
         $this->assertEquals(
-            \DateTime::createFromFormat(MessageHeaderXmlParser::DATE_ISO8601_MILLISECONDS, $readAt),
+            \DateTime::createFromFormat(DATE_ISO8601, $readAt),
             $result->readAt()
         );
         $this->assertEquals($readBy, $result->readBy());

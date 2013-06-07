@@ -39,8 +39,6 @@ use Esendex\Model\InboxMessage;
 
 class MessageHeaderXmlParser
 {
-    const DATE_ISO8601_MILLISECONDS = "Y-m-d\TH:i:s.uO";
-
     public function parse($xml)
     {
         $header = simplexml_load_string($xml);
@@ -80,11 +78,13 @@ class MessageHeaderXmlParser
 
         return $result;
     }
-
+	
     private function ParseDateTime($value)
     {
-        return (strlen($value) > 20)
-            ? \DateTime::createFromFormat(self::DATE_ISO8601_MILLISECONDS, $value)
-            : \DateTime::createFromFormat(DATE_ISO8601, $value);
+		$value = (strlen($value) > 20)
+			? substr($value, 0, 19) . "Z"
+			: $value;
+			
+        return \DateTime::createFromFormat(DATE_ISO8601, $value);
     }
 }
