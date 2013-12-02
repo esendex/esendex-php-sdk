@@ -40,7 +40,7 @@ class UriBuilder
 
     public static function serviceUri($version, $resource, array $parts = null, $secure = true)
     {
-        $host = self::HOST;
+        $host = defined("ESENDEX_API_HOST") ? ESENDEX_API_HOST : self::HOST;
         $scheme = ($secure) ? "https" : "http";
 
         $result = "{$scheme}://{$host}/{$version}/{$resource}";
