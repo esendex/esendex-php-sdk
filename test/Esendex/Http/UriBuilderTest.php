@@ -49,6 +49,23 @@ class UriBuilderTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals($expected, $result);
     }
+	
+	/**
+     * @test
+	 * @runInSeparateProcess
+     */
+    function serviceUriWithOverrideHostReturnsExpectedUri()
+    {
+		define("ESENDEX_API_HOST", "api.myfakeesendex.com");
+		
+        $version = "v1.0";
+        $resource = "apple";
+        $expected = "https://" . ESENDEX_API_HOST . "/{$version}/{$resource}";
+
+        $result = UriBuilder::serviceUri($version, $resource);
+
+        $this->assertEquals($expected, $result);
+    }
 
     /**
      * @test
@@ -56,7 +73,7 @@ class UriBuilderTest extends \PHPUnit_Framework_TestCase
     function serviceUriReturnsExpectedUriWhenUnsecured()
     {
         $version = "v1.0";
-        $resource = "banana";
+        $resource = "orange";
         $expected = "http://" . UriBuilder::HOST . "/{$version}/{$resource}";
 
         $result = UriBuilder::serviceUri($version, $resource, null, false);
@@ -70,7 +87,7 @@ class UriBuilderTest extends \PHPUnit_Framework_TestCase
     function serviceUriReturnsExpectedUriWithIdentifier()
     {
         $version = "v1.0";
-        $resource = "banana";
+        $resource = "pear";
         $identifier = uniqid();
         $expected = "https://" . UriBuilder::HOST . "/{$version}/{$resource}/{$identifier}";
 
@@ -85,7 +102,7 @@ class UriBuilderTest extends \PHPUnit_Framework_TestCase
     function serviceUriReturnsExpectedUriWithIdentifierAndSubResource()
     {
         $version = "v1.0";
-        $resource = "banana";
+        $resource = "plum";
         $identifier = uniqid();
         $subResource = "peel";
         $expected = "https://" . UriBuilder::HOST . "/{$version}/{$resource}/{$identifier}/{$subResource}";
@@ -101,7 +118,7 @@ class UriBuilderTest extends \PHPUnit_Framework_TestCase
     function serviceUriReturnsExpectedUriWithIdentifierRequiringEncoding()
     {
         $version = "v1.0";
-        $resource = "banana";
+        $resource = "fig";
         $identifier = "!encode me!";
         $encoded = rawurlencode($identifier);
         $expected = "https://" . UriBuilder::HOST . "/{$version}/{$resource}/{$encoded}";
