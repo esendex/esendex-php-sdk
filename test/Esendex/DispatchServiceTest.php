@@ -47,7 +47,7 @@ class DispatchServiceTest extends \PHPUnit_Framework_TestCase
 
     function setUp()
     {
-        $this->reference = "asjkdhlajksdhla";
+        $this->reference = "EX123456";
         $this->username = "jhdkfjh";
         $this->password = "dklfjlsdjkf";
         $this->authentication = new Authentication\LoginAuthentication(
@@ -126,5 +126,82 @@ class DispatchServiceTest extends \PHPUnit_Framework_TestCase
         );
 
         $this->service->send($message);
+    }
+
+    const ACCOUNTS_RESPONSE_XML = <<<XML
+<?xml version="1.0" encoding="utf-8"?>
+<accounts xmlns="http://api.esendex.com/ns/">
+    <account id="33efe83d-f1ac-44d9-929f-2c65c937aad3" uri="https://api.esendex.com/v1.0/accounts/33efe83d-f1ac-44d9-929f-2c65c937aad3">
+        <reference>EX123456</reference>
+        <label />
+        <address>447712345678</address>
+        <alias>@esendex</alias>
+        <type>Professional</type>
+        <messagesremaining>1000</messagesremaining>
+        <expireson>2020-01-01T00:00:00</expireson>
+        <role>PowerUser</role>
+        <defaultdialcode>44</defaultdialcode>
+        <settings uri="https://api.esendex.com/v1.0/accounts/33efe83d-f1ac-44d9-929f-2c65c937aad3/settings" />
+    </account>
+</accounts>
+XML;
+
+    /**
+     * @test
+     */
+    function getCredits()
+    {
+        $this->httpUtil
+            ->expects($this->once())
+            ->method("get")
+            ->with(
+            $this->equalTo(
+                "https://api.esendex.com/v1.0/accounts"
+            ),
+            $this->isInstanceOf("\\Esendex\\Authentication\\LoginAuthentication")
+        )
+            ->will($this->returnValue(self::ACCOUNTS_RESPONSE_XML));
+
+        $result = $this->service->getCredits();
+
+        $this->assertEquals(1000, $result);
+    }
+
+    const ACCOUNTS_NOCREDITS_RESPONSE_XML = <<<XML
+<?xml version="1.0" encoding="utf-8"?>
+<accounts xmlns="http://api.esendex.com/ns/">
+    <account id="33efe83d-f1ac-44d9-929f-2c65c937aad3" uri="https://api.esendex.com/v1.0/accounts/33efe83d-f1ac-44d9-929f-2c65c937aad3">
+        <reference>EX123456</reference>
+        <label />
+        <address>447712345678</address>
+        <alias>@esendex</alias>
+        <type>Professional</type>
+        <expireson>2020-01-01T00:00:00</expireson>
+        <role>PowerUser</role>
+        <defaultdialcode>44</defaultdialcode>
+        <settings uri="https://api.esendex.com/v1.0/accounts/33efe83d-f1ac-44d9-929f-2c65c937aad3/settings" />
+    </account>
+</accounts>
+XML;
+
+    /**
+     * @test
+     */
+    function getCreditsNoCredits()
+    {
+        $this->httpUtil
+            ->expects($this->once())
+            ->method("get")
+            ->with(
+            $this->equalTo(
+                "https://api.esendex.com/v1.0/accounts"
+            ),
+            $this->isInstanceOf("\\Esendex\\Authentication\\LoginAuthentication")
+        )
+            ->will($this->returnValue(self::ACCOUNTS_NOCREDITS_RESPONSE_XML));
+
+        $result = $this->service->getCredits();
+
+        $this->assertEquals(0, $result);
     }
 }

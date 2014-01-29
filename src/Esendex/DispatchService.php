@@ -36,8 +36,10 @@ namespace Esendex;
 
 class DispatchService
 {
-    const SERVICE = "messagedispatcher";
-    const SERVICE_VERSION = "v1.0";
+    const DISPATCH_SERVICE = "messagedispatcher";
+    const DISPATCH_SERVICE_VERSION = "v1.0";
+    const ACCOUNTS_SERVICE = "accounts";
+    const ACCOUNTS_SERVICE_VERSION = "v1.0";
 
     private $authentication;
     private $httpClient;
@@ -71,8 +73,8 @@ class DispatchService
     {
         $xml = $this->parser->encode($message);
         $uri = Http\UriBuilder::serviceUri(
-            self::SERVICE_VERSION,
-            self::SERVICE,
+            self::DISPATCH_SERVICE_VERSION,
+            self::DISPATCH_SERVICE,
             null,
             $this->httpClient->isSecure()
         );
@@ -89,6 +91,34 @@ class DispatchService
             return $arr[0];
         } else {
             throw new Exceptions\EsendexException("Error parsing the dispatch result", null, array('data_returned' => $result));
+        }
+    }
+
+    /**
+     * Get the number of remaining credits for your account
+     *
+     * @return int
+     */
+    public function getCredits()
+    {
+        try {
+            $uri = Http\UriBuilder::serviceUri(
+                self::ACCOUNTS_SERVICE_VERSION,
+                self::ACCOUNTS_SERVICE,
+                null,
+                $this->httpClient->isSecure()
+            );
+
+            $xml = $this->httpClient->get($uri, $this->authentication);
+            $accounts = new \SimpleXMLElement($xml);
+            foreach ($accounts->account as $account) {
+                if (strcasecmp($account->reference, $this->authentication->accountReference()) == 0) {
+                    return intval($account->messagesremaining, 10);
+                }
+            }
+            return 0;
+        } catch (\Exception $e) {
+            return 0;
         }
     }
 }
