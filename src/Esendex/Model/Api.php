@@ -40,7 +40,7 @@ class Api
 
     private static $major = 1;
     private static $minor = 0;
-    private static $patch = 3;
+    private static $patch = 4;
 
     public static function getVersion()
     {
