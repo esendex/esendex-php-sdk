@@ -61,9 +61,15 @@ class UriBuilder
 
     public static function buildQuery(array $params)
     {
-        if (defined("PHP_QUERY_RFC3986")) {
+        if (defined("PHP_QUERY_RFC3986")) { // >= 5.4
+            foreach ($params as $key => $value) {
+                if ($value instanceof \DateTime) {
+                    $params[$key] = $value->format(\DateTime::ISO8601);
+                }
+            }
             return http_build_query($params, '', self::$url_separator, PHP_QUERY_RFC3986);
         }
+
         $result = '';
         $glue = '';
         foreach ($params as $key => $value) {
