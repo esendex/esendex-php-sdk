@@ -83,11 +83,8 @@ class SentMessagesService
         if ($count != null && is_int($count)) {
             $query["count"] = $count;
         }
-        $glue = "?";
-        foreach ($query as $key => $value)
-        {
-            $uri .= "{$glue}{$key}={$value}";
-            $glue = "&";
+        if (count($query) > 0) {
+            $uri .= "?" . Http\UriBuilder::buildQuery($query);
         }
 
         $data = $this->httpClient->get(

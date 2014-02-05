@@ -37,6 +37,12 @@ namespace Esendex\Http;
 class UriBuilder
 {
     const HOST = "api.esendex.com";
+    private static $url_separator;
+
+    public static function init()
+    {
+        self::$url_separator = ini_get('arg_separator.output');
+    }
 
     public static function serviceUri($version, $resource, array $parts = null, $secure = true)
     {
@@ -52,4 +58,21 @@ class UriBuilder
         }
         return $result;
     }
+
+    public static function buildQuery(array $params)
+    {
+        if (defined("PHP_QUERY_RFC3986")) {
+            return http_build_query($params, '', self::$url_separator, PHP_QUERY_RFC3986);
+        }
+        $result = '';
+        $glue = '';
+        foreach ($params as $key => $value) {
+            $encodedKey = rawurlencode($key);
+            $encodedValue = rawurlencode($value);
+            $result .= "{$glue}{$encodedKey}={$encodedValue}";
+            $glue = self::$url_separator;
+        }
+        return $result;
+    }
 }
+UriBuilder::init();
