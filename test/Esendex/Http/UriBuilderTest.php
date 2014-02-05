@@ -175,4 +175,19 @@ class UriBuilderTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals($expected, $result);
     }
+
+    /**
+     * @test
+     */
+    function buildQueryWithDateTimeValueReturnsExpectedQueryString()
+    {
+        $params = array(
+            'date'=>\DateTime::createFromFormat(\DateTime::ISO8601, '2014-03-02T01:02:03+0000')
+            );
+        $expected = "date=2014-03-02T01%3A02%3A03%2B0000";
+
+        $result = UriBuilder::buildQuery($params);
+
+        $this->assertEquals($expected, $result);
+    }
 }

@@ -67,6 +67,10 @@ class UriBuilder
         $result = '';
         $glue = '';
         foreach ($params as $key => $value) {
+            if ($value instanceof \DateTime) {
+                $value = $value->format(\DateTime::ISO8601);
+            }
+
             $encodedKey = rawurlencode($key);
             $encodedValue = rawurlencode($value);
             $result .= "{$glue}{$encodedKey}={$encodedValue}";

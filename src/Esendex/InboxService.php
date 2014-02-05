@@ -65,7 +65,7 @@ class InboxService
     /**
      * @param int $startIndex
      * @param int $count
-     * @return array
+     * @return Model\InboxPage
      */
     public function latest($startIndex = null, $count = null)
     {

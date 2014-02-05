@@ -65,9 +65,26 @@ class SentMessagesService
     /**
      * @param int $startIndex
      * @param int $count
-     * @return array
+     * @return Model\SentMessagesPage
      */
     public function latest($startIndex = null, $count = null)
+    {
+        $query = array();
+        if ($startIndex != null && is_int($startIndex)) {
+            $query["startIndex"] = $startIndex;
+        }
+        if ($count != null && is_int($count)) {
+            $query["count"] = $count;
+        }
+
+        return $this->loadMessages($query);
+    }
+
+    /**
+     * @param array $options
+     * @return Model\SentMessagesPage
+     */
+    public function loadMessages(array $options)
     {
         $uri = Http\UriBuilder::serviceUri(
             self::SENT_MESSAGES_SERVICE_VERSION,
@@ -76,17 +93,9 @@ class SentMessagesService
             $this->httpClient->isSecure()
         );
 
-        $query = array('accountreference' => $this->authentication->accountReference());
-        if ($startIndex != null && is_int($startIndex)) {
-            $query["startIndex"] = $startIndex;
-        }
-        if ($count != null && is_int($count)) {
-            $query["count"] = $count;
-        }
-        if (count($query) > 0) {
-            $uri .= "?" . Http\UriBuilder::buildQuery($query);
-        }
-
+        $options['accountreference'] = $this->authentication->accountReference();
+        $uri .= "?" . Http\UriBuilder::buildQuery($options);
+        
         $data = $this->httpClient->get(
             $uri,
             $this->authentication

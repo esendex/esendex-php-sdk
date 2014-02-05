@@ -104,7 +104,7 @@ class SentMessagesServiceTest extends \PHPUnit_Framework_TestCase
             ->method("get")
             ->with(
             $this->equalTo(
-                "https://api.esendex.com/v1.0/messageheaders?accountreference={$this->reference}&startIndex={$startIndex}"
+                "https://api.esendex.com/v1.0/messageheaders?startIndex={$startIndex}&accountreference={$this->reference}"
             ),
             $this->equalTo($this->authentication)
         );
@@ -125,7 +125,7 @@ class SentMessagesServiceTest extends \PHPUnit_Framework_TestCase
             ->method("get")
             ->with(
             $this->equalTo(
-                "https://api.esendex.com/v1.0/messageheaders?accountreference={$this->reference}&startIndex={$startIndex}&count={$count}"
+                "https://api.esendex.com/v1.0/messageheaders?startIndex={$startIndex}&count={$count}&accountreference={$this->reference}"
             ),
             $this->equalTo($this->authentication)
         );
@@ -145,11 +145,52 @@ class SentMessagesServiceTest extends \PHPUnit_Framework_TestCase
             ->method("get")
             ->with(
             $this->equalTo(
-                "https://api.esendex.com/v1.0/messageheaders?accountreference={$this->reference}&count={$count}"
+                "https://api.esendex.com/v1.0/messageheaders?count={$count}&accountreference={$this->reference}"
             ),
             $this->equalTo($this->authentication)
         );
 
         $this->service->latest(null, $count);
+    }
+
+    /**
+     * @test
+     */
+    function loadMessagesWithStartAndFinishReturnsSentMessagesPage()
+    {
+        $start = new \DateTime();
+        $start->sub(new \DateInterval('P1M'));
+        $startFormatted = rawurlencode($start->format(\DateTime::ISO8601));
+        $finish = new \DateTime();
+        $finishFormatted = rawurlencode($finish->format(\DateTime::ISO8601));
+        $response = "xml response";
+        $sentMessagesPage = new Model\SentMessagesPage(0, 10);
+
+        $this->httpUtil
+            ->expects($this->once())
+            ->method("get")
+            ->with(
+            $this->equalTo(
+                "https://api.esendex.com/v1.0/messageheaders?" .
+                "start={$startFormatted}&" .
+                "finish={$finishFormatted}&" .
+                "accountreference={$this->reference}"
+            ),
+            $this->equalTo($this->authentication)
+        )
+            ->will($this->returnValue($response));
+        $this->parser
+            ->expects($this->once())
+            ->method("parse")
+            ->with($this->equalTo($response))
+            ->will($this->returnValue($sentMessagesPage));
+
+        $options = array(
+            'start' => $start,
+            'finish' => $finish
+            );
+        $result = $this->service->loadMessages($options);
+
+        $this->assertSame($sentMessagesPage, $result);
     }
 }
