@@ -34,10 +34,10 @@
  */
 namespace Esendex;
 
-class InboxService
+class SentMessagesService
 {
-    const INBOX_SERVICE = 'inbox';
-    const INBOX_SERVICE_VERSION = 'v1.0';
+    const SENT_MESSAGES_SERVICE = 'messageheaders';
+    const SENT_MESSAGES_SERVICE_VERSION = 'v1.0';
 
     private $authentication;
     private $httpClient;
@@ -46,12 +46,12 @@ class InboxService
     /**
      * @param Authentication\IAuthentication $authentication
      * @param Http\IHttp $httpClient
-     * @param Parser\InboxXmlParser $parser
+     * @param Parser\SentMessagesXmlParser $parser
      */
     public function __construct(
         Authentication\IAuthentication $authentication,
         Http\IHttp $httpClient = null,
-        Parser\InboxXmlParser $parser = null
+        Parser\SentMessagesXmlParser $parser = null
     ) {
         $this->authentication = $authentication;
         $this->httpClient = (isset($httpClient))
@@ -59,23 +59,16 @@ class InboxService
             : new Http\HttpClient(true);
         $this->parser = (isset($parser))
             ? $parser
-            : new Parser\InboxXmlParser(new Parser\MessageHeaderXmlParser());
+            : new Parser\SentMessagesXmlParser(new Parser\MessageHeaderXmlParser());
     }
 
     /**
      * @param int $startIndex
      * @param int $count
-     * @return Model\InboxPage
+     * @return Model\SentMessagesPage
      */
     public function latest($startIndex = null, $count = null)
     {
-        $uri = Http\UriBuilder::serviceUri(
-            self::INBOX_SERVICE_VERSION,
-            self::INBOX_SERVICE,
-            array($this->authentication->accountReference(), "messages"),
-            $this->httpClient->isSecure()
-        );
-
         $query = array();
         if ($startIndex != null && is_int($startIndex)) {
             $query["startIndex"] = $startIndex;
@@ -83,9 +76,25 @@ class InboxService
         if ($count != null && is_int($count)) {
             $query["count"] = $count;
         }
-        if (count($query) > 0) {
-            $uri .= "?" . Http\UriBuilder::buildQuery($query);
-        }
+
+        return $this->loadMessages($query);
+    }
+
+    /**
+     * @param array $options
+     * @return Model\SentMessagesPage
+     */
+    public function loadMessages(array $options)
+    {
+        $uri = Http\UriBuilder::serviceUri(
+            self::SENT_MESSAGES_SERVICE_VERSION,
+            self::SENT_MESSAGES_SERVICE,
+            null,
+            $this->httpClient->isSecure()
+        );
+
+        $options['accountreference'] = $this->authentication->accountReference();
+        $uri .= "?" . Http\UriBuilder::buildQuery($options);
         
         $data = $this->httpClient->get(
             $uri,
@@ -93,23 +102,5 @@ class InboxService
         );
 
         return $this->parser->parse($data);
-    }
-
-    /**
-     * Delete an inbox message using it's messageId
-     *
-     * @param string $messageId
-     * @return bool
-     */
-    function deleteInboxMessage($messageId)
-    {
-        $uri = Http\UriBuilder::serviceUri(
-            self::INBOX_SERVICE_VERSION,
-            self::INBOX_SERVICE,
-            array("messages", $messageId),
-            $this->httpClient->isSecure()
-        );
-
-        return $this->httpClient->delete($uri, $this->authentication) == 200;
     }
 }

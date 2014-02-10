@@ -127,4 +127,67 @@ class UriBuilderTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals($expected, $result);
     }
+
+    /**
+     * @test
+     */
+    function buildQueryReturnsExpectedQueryString()
+    {
+        $params = array(
+            'startIndex'=>20,
+            'count'=>10
+            );
+        $expected = "startIndex=20&count=10";
+
+        $result = UriBuilder::buildQuery($params);
+
+        $this->assertEquals($expected, $result);
+    }
+
+    /**
+     * @test
+     */
+    function buildQueryWithNonUriCharsInValuesReturnsExpectedQueryString()
+    {
+        $params = array(
+            'first'=>'value to encode',
+            'second'=>'value:to/encode'
+            );
+        $expected = "first=value%20to%20encode&second=value%3Ato%2Fencode";
+
+        $result = UriBuilder::buildQuery($params);
+
+        $this->assertEquals($expected, $result);
+    }
+
+    /**
+     * @test
+     */
+    function buildQueryWithNonUriCharsInKeysReturnsExpectedQueryString()
+    {
+        $params = array(
+            'first key'=>'value',
+            'second:key'=>'value'
+            );
+        $expected = "first%20key=value&second%3Akey=value";
+
+        $result = UriBuilder::buildQuery($params);
+
+        $this->assertEquals($expected, $result);
+    }
+
+    /**
+     * @test
+     */
+    function buildQueryWithDateTimeValueReturnsExpectedQueryString()
+    {
+        $params = array(
+            'date'=>\DateTime::createFromFormat(\DateTime::ISO8601, '2014-03-02T01:02:03+0000')
+            );
+        $expected = "date=2014-03-02T01%3A02%3A03%2B0000";
+
+        $result = UriBuilder::buildQuery($params);
+
+        $this->assertEquals($expected, $result);
+    }
 }

@@ -25,61 +25,35 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
- * @category   Http
+ * @category   Parser
  * @package    Esendex
  * @author     Esendex Support <support@esendex.com>
  * @copyright  2013 Esendex Ltd.
  * @license    http://opensource.org/licenses/BSD-3-Clause  BSD 3-Clause
  * @link       https://github.com/esendex/esendex-php-sdk
  */
-namespace Esendex\Http;
+namespace Esendex\Parser;
 
-class UriBuilder
+class SentMessagesXmlParser
 {
-    const HOST = "api.esendex.com";
-    private static $url_separator;
+    private $headerParser;
 
-    public static function init()
+    public function __construct(MessageHeaderXmlParser $headerParser)
     {
-        self::$url_separator = ini_get('arg_separator.output');
+        if (is_null($headerParser))
+            throw new \Esendex\Exceptions\ArgumentException("headerParser must be set");
+
+        $this->headerParser = $headerParser;
     }
 
-    public static function serviceUri($version, $resource, array $parts = null, $secure = true)
+    public function parse($xml)
     {
-        $host = defined("ESENDEX_API_HOST") ? ESENDEX_API_HOST : self::HOST;
-        $scheme = ($secure) ? "https" : "http";
-
-        $result = "{$scheme}://{$host}/{$version}/{$resource}";
-        if (isset($parts)) {
-            foreach ($parts as $part) {
-                $encodedPart = rawurlencode($part);
-                $result .= "/{$encodedPart}";
-            }
-        }
-        return $result;
-    }
-
-    public static function buildQuery(array $params)
-    {
-        foreach ($params as $key => $value) {
-            if ($value instanceof \DateTime) {
-                $params[$key] = $value->format(\DateTime::ISO8601);
-            }
-        }
-        
-        if (defined("PHP_QUERY_RFC3986")) { // >= 5.4
-            return http_build_query($params, '', self::$url_separator, PHP_QUERY_RFC3986);
-        }
-
-        $result = '';
-        $glue = '';
-        foreach ($params as $key => $value) {
-            $encodedKey = rawurlencode($key);
-            $encodedValue = rawurlencode($value);
-            $result .= "{$glue}{$encodedKey}={$encodedValue}";
-            $glue = self::$url_separator;
+        $headers = simplexml_load_string($xml);
+        $result = new \Esendex\Model\SentMessagesPage($headers["startindex"], $headers["totalcount"]);
+        foreach ($headers->messageheader as $header)
+        {
+            $result[] = $this->headerParser->parseHeader($header);
         }
         return $result;
     }
 }
-UriBuilder::init();
