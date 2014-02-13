@@ -1,5 +1,6 @@
-Esendex PHP SDK
-===============
+Esendex PHP Client
+==================
+[![Latest Stable Version](https://poser.pugx.org/esendex/sdk/v/stable.png)](https://packagist.org/packages/esendex/sdk) [![Latest Unstable Version](https://poser.pugx.org/esendex/sdk/v/unstable.png)](https://packagist.org/packages/esendex/sdk) [![License](https://poser.pugx.org/esendex/sdk/license.png)](https://packagist.org/packages/esendex/sdk)
 
 ## Installation
 
