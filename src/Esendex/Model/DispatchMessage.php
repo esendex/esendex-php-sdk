@@ -36,7 +36,7 @@ namespace Esendex\Model;
 
 class DispatchMessage extends Message
 {
-    const ENGLISH_LANGUAGE = "en-gb";
+    const ENGLISH_LANGUAGE = "en-GB";
 
     private $validityPeriod;
     private $body;
