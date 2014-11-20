@@ -2,7 +2,7 @@
 /**
  * Copyright (c) 2013, Esendex Ltd.
  * All rights reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
  *     * Redistributions of source code must retain the above copyright
@@ -13,7 +13,7 @@
  *     * Neither the name of Esendex nor the
  *       names of its contributors may be used to endorse or promote products
  *       derived from this software without specific prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
  * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -56,6 +56,9 @@ abstract class Message
     public function originator($value = null)
     {
         if ($value != null) {
+            if (strlen($value) > 11) {
+                throw new ArgumentException('The originator cannot be greater then 11 alphanumeric characters');
+            }
             $this->originator = (string)$value;
         }
         return $this->originator;
