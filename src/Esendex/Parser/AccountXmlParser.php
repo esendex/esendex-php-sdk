@@ -33,49 +33,32 @@
  * @link       https://github.com/esendex/esendex-php-sdk
  */
 namespace Esendex\Parser;
-use Esendex\Model\Message;
-use Esendex\Model\SentMessage;
-use Esendex\Model\InboxMessage;
+use Esendex\Model\Account;
 
-class MessageHeaderXmlParser
+class AccountXmlParser
 {
     public function parse($xml)
     {
-        $header = simplexml_load_string($xml);
-        return $this->parseHeader($header);
-    }
-
-    public function parseHeader($header)
-    {
-        $direction = $header->direction;
-        $result = ($direction == Message::Inbound)
-            ? new InboxMessage()
-            : new SentMessage();
-
-        $result->id($header["id"]);
-        $result->originator($header->from->phonenumber);
-        $result->recipient($header->to->phonenumber);
-        $result->status($header->status);
-        $result->type($header->type);
-        $result->direction($direction);
-        $result->parts($header->parts);
-        $result->bodyUri($header->body["uri"]);
-        $result->summary($header->summary);
-        $result->lastStatusAt($this->parseDateTime($header->laststatusat));
-        if ($direction == Message::Outbound) {
-            $result->submittedAt($this->parseDateTime($header->submittedat));
-            $result->sentAt($this->parseDateTime($header->sentat));
-            $result->deliveredAt($this->parseDateTime($header->deliveredat));
-            $result->username($header->username);
-        } else {
-            $result->receivedAt($this->parseDateTime($header->receivedat));
-            $readAt = $header->readat;
-            if (substr($readAt, 0, 2) != "00") {
-                $result->readAt($this->parseDateTime($readAt));
-                $result->readBy($header->readby);
-            }
+        $accounts = simplexml_load_string($xml);
+        $result = array();
+        foreach ($accounts->account as $account) {
+            $result[] = $this->parseAccount($account);
         }
-
+        return $result;
+    }
+    
+    private function parseAccount($account)
+    {
+        $result = new Account();
+        $result->id($account["id"]);
+        $result->reference($account->reference);
+        $result->label($account->label);
+        $result->address($account->address);
+        $result->alias($account->alias);
+        $result->type($account->type);
+        $result->messagesRemaining(intval($account->messagesremaining, 10));
+        $result->expiresOn($this->parseDateTime($account->expireson));
+        $result->defaultDialCode($account->defaultdialcode);
         return $result;
     }
 	
