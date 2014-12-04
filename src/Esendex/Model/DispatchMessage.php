@@ -33,6 +33,8 @@
  * @link       https://github.com/esendex/esendex-php-sdk
  */
 namespace Esendex\Model;
+use Esendex\Exceptions\ArgumentException;
+use Esendex\Model\MessageBody;
 
 class DispatchMessage extends Message
 {
@@ -41,6 +43,7 @@ class DispatchMessage extends Message
     private $validityPeriod;
     private $body;
     private $language;
+    private $characterSet;
 
     /**
      * @param string $originator
@@ -56,7 +59,8 @@ class DispatchMessage extends Message
         $body,
         $type,
         $validityPeriod = 0,
-        $language = self::ENGLISH_LANGUAGE
+        $language = self::ENGLISH_LANGUAGE,
+        $characterSet = null
     ) {
         $this->originator($originator);
         $this->recipient($recipient);
@@ -64,6 +68,7 @@ class DispatchMessage extends Message
         $this->type($type);
         $this->validityperiod($validityPeriod);
         $this->language($language);
+        $this->characterSet($characterSet);
     }
 
     /**
@@ -103,5 +108,25 @@ class DispatchMessage extends Message
             $this->language = (string)$value;
         }
         return $this->language;
+    }
+
+    /**
+     * See http://developers.esendex.com/APIs/REST-API/messagedispatcher for
+     * details of usage.
+     *
+     * @param string $value
+     * @return string
+     */
+    public function characterSet($value = null)
+    {
+        if ($value != null) {
+            if ($value != MessageBody::CharsetGSM 
+             && $value != MessageBody::CharsetUnicode
+             && $value != MessageBody::CharsetAuto) {
+                throw new ArgumentException("characterSet() value was '{$value}' and must be one of '" . MessageBody::CharsetGSM . "', '" . MessageBody::CharsetUnicode . "' or '" . MessageBody::CharsetAuto . "'");
+            }
+            $this->characterSet = (string)$value;
+        }
+        return $this->characterSet;
     }
 }

@@ -59,11 +59,14 @@ class DispatchXmlParser
 
         $doc = new \SimpleXMLElement("<?xml version=\"1.0\" encoding=\"utf-8\"?><messages />", 0, false, Api::NS);
         $doc->accountreference = $this->reference;
+        if ($message->characterSet() != null)
+            $doc->characterset = $message->characterSet();
+
         $child = $doc->addChild("message");
         $child->from = $message->originator();
         $child->to = $message->recipient();
         $child->body = $message->body();
-		$child->type = $message->type();
+		    $child->type = $message->type();
         if ($message->validityPeriod() > 0)
             $child->validity = $message->validityPeriod();
         if ($message->language() != null)

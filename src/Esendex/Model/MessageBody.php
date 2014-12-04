@@ -66,7 +66,7 @@ class MessageBody
     {
         if ($value != null) {
             if ($value != self::CharsetGSM && $value != self::CharsetUnicode) {
-                throw new ArgumentException("type() value was '{$value}' and must be either '{self::CharsetGSM}' or '{self::CharsetUnicode}'");
+                throw new ArgumentException("characterSet() value was '{$value}' and must be either '" . self::CharsetGSM . "' or '" . self::CharsetUnicode . "'");
             }
             $this->characterSet = (string)$value;
         }
