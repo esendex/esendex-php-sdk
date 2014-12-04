@@ -63,13 +63,18 @@ class AccountService
     }
 
     /**
+     * @param string $reference
      * @return Model\Account
      */
-    public function getAccount()
+    public function getAccount($reference = null)
     {
+        $target = isset($reference)
+            ? $reference
+            : $this->authentication->accountReference();
+            
         $accounts = $this->getAccounts();
         foreach ($accounts as $account) {
-            if (strcasecmp($account->reference(), $this->authentication->accountReference()) == 0) {
+            if (strcasecmp($account->reference(), $target) == 0) {
                 return $account;
             }
         }

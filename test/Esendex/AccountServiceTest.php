@@ -126,6 +126,39 @@ class AccountServiceTest extends \PHPUnit_Framework_TestCase
     /**
      * @test
      */
+    function getAccountWithSpecificReference()
+    {
+        $response = "xml response";
+        $specificReference = "aBc123";
+        $defaultAccount = new Model\Account();
+        $defaultAccount->reference($this->reference);
+        $requiredAccount = new Model\Account();
+        $requiredAccount->reference($specificReference);
+
+        $this->httpUtil
+            ->expects($this->once())
+            ->method("get")
+            ->with(
+            $this->equalTo(
+                "https://api.esendex.com/v1.0/accounts"
+            ),
+            $this->equalTo($this->authentication)
+        )
+            ->will($this->returnValue($response));
+        $this->parser
+            ->expects($this->once())
+            ->method("parse")
+            ->with($this->equalTo($response))
+            ->will($this->returnValue(array($defaultAccount,$requiredAccount)));
+
+        $result = $this->service->getAccount($specificReference);
+
+        $this->assertSame($requiredAccount, $result);
+    }
+
+    /**
+     * @test
+     */
     function getAccounts()
     {
         $response = "xml response";
