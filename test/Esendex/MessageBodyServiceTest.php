@@ -33,6 +33,7 @@
  * @link       https://github.com/esendex/esendex-php-sdk
  */
 namespace Esendex;
+use Esendex\Model\MessageBody;
 
 class MessageBodyServiceTest extends \PHPUnit_Framework_TestCase
 {
@@ -40,6 +41,7 @@ class MessageBodyServiceTest extends \PHPUnit_Framework_TestCase
 <?xml version="1.0" encoding="utf-8"?>
 <messagebody xmlns="http://api.esendex.com/ns/">
     <bodytext>Merci</bodytext>
+    <characterset>GSM</characterset>
 </messagebody>
 XML;
 
@@ -86,6 +88,9 @@ XML;
         $messageBody = $this->service->getMessageBodyById($this->messageId);
 
         $this->assertEquals("Merci", $messageBody);
+        $this->assertInstanceOf("\\Esendex\\Model\\MessageBody", $messageBody);
+        $this->assertEquals("Merci", $messageBody->bodyText());
+        $this->assertEquals(MessageBody::CharsetGSM, $messageBody->characterSet());
     }
 
     /**

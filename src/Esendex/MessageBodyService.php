@@ -33,6 +33,7 @@
  * @link       https://github.com/esendex/esendex-php-sdk
  */
 namespace Esendex;
+use Esendex\Model\MessageBody;
 
 class MessageBodyService
 {
@@ -105,6 +106,9 @@ class MessageBodyService
 
         $messageBody = simplexml_load_string($result);
 
-        return (string)$messageBody->bodytext;
+        $result = new MessageBody();
+        $result->bodyText($messageBody->bodytext);
+        $result->characterSet($messageBody->characterset);
+        return $result;
     }
 }
