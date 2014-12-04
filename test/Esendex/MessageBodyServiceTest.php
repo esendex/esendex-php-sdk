@@ -113,12 +113,13 @@ XML;
      */
     function getMessageBodyWithMessageBodyUri()
     {
+        $bodyUri = "https://api.esendex.com/v1.0/messageheaders/{$this->messageId}/body";
         $this->httpUtil
             ->expects($this->once())
             ->method("get")
+            ->with($this->equalTo($bodyUri))
             ->will($this->returnValue(self::MESSAGEBODY_RESPONSE_XML));
 
-        $bodyUri = "https://api.esendex.com/v1.0/messageheaders/{$this->messageId}/body";
         $messageBody = $this->service->getMessageBody($bodyUri);
 
         $this->assertEquals("Merci", $messageBody);
@@ -129,13 +130,15 @@ XML;
      */
     function getMessageBodyWithMessageHeader()
     {
+        $bodyUri = "https://api.esendex.com/v1.0/messageheaders/{$this->messageId}/body";
         $this->httpUtil
             ->expects($this->once())
             ->method("get")
+            ->with($this->equalTo($bodyUri))
             ->will($this->returnValue(self::MESSAGEBODY_RESPONSE_XML));
 
         $messageHeader = new Model\SentMessage();
-        $messageHeader->bodyUri("https://api.esendex.com/v1.0/messageheaders/{$this->messageId}/body");
+        $messageHeader->bodyUri($bodyUri);
         $messageBody = $this->service->getMessageBody($messageHeader);
 
         $this->assertEquals("Merci", $messageBody);

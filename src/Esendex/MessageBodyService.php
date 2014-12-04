@@ -55,14 +55,14 @@ class MessageBodyService
     }
 
     /**
-     * @param $object
+     * @param string|\Esendex\Model\ResultMessage $object
      * @return string
      * @throws Exceptions\ArgumentException
      */
     public function getMessageBody($object)
     {
         if ($object instanceof \Esendex\Model\ResultMessage) {
-            return $this->getMessageBodyById($object->bodyUri());
+            return $this->loadMessageBody($object->bodyUri());
         }
 
         if (is_string($object)) {
@@ -73,7 +73,7 @@ class MessageBodyService
     }
 
     /**
-     * @param $messageId
+     * @param string $messageId
      * @return string
      * @throws Exceptions\ArgumentException
      */
