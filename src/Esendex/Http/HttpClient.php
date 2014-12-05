@@ -106,11 +106,11 @@ class HttpClient implements IHttp
         $curlHandle = \curl_init();
 
         \curl_setopt($curlHandle, CURLOPT_URL, $url);
-        \curl_setopt($curlHandle, CURLOPT_FAILONERROR, 1);
-        \curl_setopt($curlHandle, CURLOPT_FOLLOWLOCATION, 1); // Allow redirects.
-        \curl_setopt($curlHandle, CURLOPT_RETURNTRANSFER, 1);
+        \curl_setopt($curlHandle, CURLOPT_FAILONERROR, false);
+        \curl_setopt($curlHandle, CURLOPT_FOLLOWLOCATION, true); // Allow redirects.
+        \curl_setopt($curlHandle, CURLOPT_RETURNTRANSFER, true);
         \curl_setopt($curlHandle, CURLOPT_TIMEOUT, 30);
-        \curl_setopt($curlHandle, CURLOPT_HEADER, 0);
+        \curl_setopt($curlHandle, CURLOPT_HEADER, false);
         \curl_setopt($curlHandle, CURLOPT_CAINFO, self::$certificateBundle);
         \curl_setopt($curlHandle, CURLOPT_USERAGENT, self::$userAgent);
         \curl_setopt($curlHandle, CURLOPT_CUSTOMREQUEST, $method);
@@ -127,21 +127,25 @@ class HttpClient implements IHttp
 
         $results = array();
         $results['data'] = $result;
-        $results['url'] = $url;
         $results['statuscode'] = $curlInfo["http_code"];
-        $results['curlerror'] = \curl_error($curlHandle);
 
         \curl_close($curlHandle);
 
-        if ($results['statuscode'] != 200) {
-            throw $this->getHttpException($results['statuscode'], $result['curlerror'], $curlInfo);
+        if ($results['statuscode'] < 200 || $results['statuscode'] >= 300) {
+            throw $this->getHttpException($results, $curlInfo);
         }
 
+        $results['url'] = $curlInfo['url'];
         return $results;
     }
 
-    private function getHttpException($http_code, $error_message = '', array $info = null)
+    private function getHttpException(array $result, array $info = null)
     {
+        $http_code = $result["statuscode"];
+        $data = $result["data"];
+        $error_message = strlen($data) != 0 && $data != $http_code
+            ? $data
+            : "The requested URL returned error: {$http_code}";
         switch ($http_code) {
             case 400:
                 return new BadRequestException($error_message, $http_code, $info);
@@ -164,9 +168,7 @@ class HttpClient implements IHttp
             case 503:
                 return new ServiceUnavailableException($error_message, $http_code, $info);
             default:
-                if (empty($error_message)) {
-                    $error_message = "An unexpected error occurred processing the web request";
-                }
+                $error_message = "An unexpected error occurred processing the web request";
                 return new \Exception($error_message, $http_code);
         }
     }
