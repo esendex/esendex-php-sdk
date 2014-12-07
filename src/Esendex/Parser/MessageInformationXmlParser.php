@@ -25,62 +25,66 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
- * @category   Model
+ * @category   Parser
  * @package    Esendex
  * @author     Esendex Support <support@esendex.com>
  * @copyright  2013 Esendex Ltd.
  * @license    http://opensource.org/licenses/BSD-3-Clause  BSD 3-Clause
  * @link       https://github.com/esendex/esendex-php-sdk
  */
-namespace Esendex\Model;
+namespace Esendex\Parser;
 
 use Esendex\Exceptions\ArgumentException;
+use Esendex\Model\Api;
+use Esendex\Model\MessageBody;
+use Esendex\Model\MessageInformation;
 
-class MessageBody
+class MessageInformationXmlParser
 {
-    const CharsetGSM = "GSM";
-    const CharsetUnicode = "Unicode";
-    const CharsetAuto = "Auto";
-    
-    private $bodyText;
-    private $characterSet;
-
-    /**
-     * @param string $value
-     * @return string
-     */
-    public function bodyText($value = null)
+    public function encode($message, $characterSet)
     {
-        if ($value != null) {
-            $this->bodyText = (string)$value;
+        if ($characterSet != MessageBody::CharsetGSM &&
+            $characterSet != MessageBody::CharsetUnicode &&
+            $characterSet != MessageBody::CharsetAuto) {
+            throw new ArgumentException(
+                "characterSet value was '{$characterSet}' and must be one of '" .
+                MessageBody::CharsetGSM .
+                "', '" .
+                MessageBody::CharsetUnicode .
+                "' or '" .
+                MessageBody::CharsetAuto .
+                "'"
+            );
         }
-        return $this->bodyText;
+
+        $doc = new \SimpleXMLElement(
+            "<?xml version=\"1.0\" encoding=\"utf-8\"?><messages />",
+            0,
+            false,
+            Api::NS
+        );
+        $child = $doc->addChild("message");
+        $child->addChild("body", $message);
+        $child->addChild("characterset", $characterSet);
+        return $doc->asXML();
     }
 
-    /**
-     * @param string $value
-     * @return string
-     * @throws \Esendex\Exceptions\ArgumentException
-     */
-    public function characterSet($value = null)
+    public function parse($xml)
     {
-        if ($value != null) {
-            if ($value != self::CharsetGSM && $value != self::CharsetUnicode) {
-                throw new ArgumentException(
-                    "characterSet() value was '{$value}' and must be either '" . 
-                    self::CharsetGSM . 
-                    "' or '" . 
-                    self::CharsetUnicode . 
-                    "'"
-                );
-            }
-            $this->characterSet = (string)$value;
+        $response = simplexml_load_string($xml);
+        $result = array();
+        foreach ($response->messages->message as $message) {
+            $result[] = $this->parseMessageInformation($message);
         }
-        return $this->characterSet;
+        return $result;
     }
 
-    public function __toString()
+    private function parseMessageInformation($message)
     {
-        return $this->bodyText;
+        $result = new MessageInformation();
+        $result->parts($message->parts);
+        $result->characterSet($message->characterset);
+        $result->availableCharactersInLastPart($message->availablecharactersinlastpart);
+        return $result;
     }
 }

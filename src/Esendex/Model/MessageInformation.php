@@ -36,25 +36,22 @@ namespace Esendex\Model;
 
 use Esendex\Exceptions\ArgumentException;
 
-class MessageBody
+class MessageInformation
 {
-    const CharsetGSM = "GSM";
-    const CharsetUnicode = "Unicode";
-    const CharsetAuto = "Auto";
-    
-    private $bodyText;
+    private $parts;
     private $characterSet;
+    private $availableCharactersInLastPart;
 
     /**
-     * @param string $value
-     * @return string
+     * @param int $value
+     * @return int
      */
-    public function bodyText($value = null)
+    public function parts($value = null)
     {
         if ($value != null) {
-            $this->bodyText = (string)$value;
+            $this->parts = intval($value);
         }
-        return $this->bodyText;
+        return $this->parts;
     }
 
     /**
@@ -65,12 +62,13 @@ class MessageBody
     public function characterSet($value = null)
     {
         if ($value != null) {
-            if ($value != self::CharsetGSM && $value != self::CharsetUnicode) {
+            if ($value != MessageBody::CharsetGSM &&
+                $value != MessageBody::CharsetUnicode) {
                 throw new ArgumentException(
                     "characterSet() value was '{$value}' and must be either '" . 
-                    self::CharsetGSM . 
+                    MessageBody::CharsetGSM . 
                     "' or '" . 
-                    self::CharsetUnicode . 
+                    MessageBody::CharsetUnicode . 
                     "'"
                 );
             }
@@ -79,8 +77,15 @@ class MessageBody
         return $this->characterSet;
     }
 
-    public function __toString()
+    /**
+     * @param int $value
+     * @return int
+     */
+    public function availableCharactersInLastPart($value = null)
     {
-        return $this->bodyText;
+        if ($value != null) {
+            $this->availableCharactersInLastPart = intval($value);
+        }
+        return $this->availableCharactersInLastPart;
     }
 }

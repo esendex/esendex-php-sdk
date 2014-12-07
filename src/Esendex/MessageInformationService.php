@@ -25,62 +25,72 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
- * @category   Model
+ * @category   Service
  * @package    Esendex
  * @author     Esendex Support <support@esendex.com>
  * @copyright  2013 Esendex Ltd.
  * @license    http://opensource.org/licenses/BSD-3-Clause  BSD 3-Clause
  * @link       https://github.com/esendex/esendex-php-sdk
  */
-namespace Esendex\Model;
+namespace Esendex;
 
-use Esendex\Exceptions\ArgumentException;
+use Esendex\Model\MessageBody;
 
-class MessageBody
+class MessageInformationService
 {
-    const CharsetGSM = "GSM";
-    const CharsetUnicode = "Unicode";
-    const CharsetAuto = "Auto";
-    
-    private $bodyText;
-    private $characterSet;
+    const SERVICE = "messages/information";
+    const SERVICE_VERSION = "v1.0";
+
+    private $authentication;
+    private $httpClient;
+    private $parser;
 
     /**
-     * @param string $value
-     * @return string
+     * @param Authentication\IAuthentication $authentication
+     * @param Http\IHttp $httpClient
+     * @param Parser\MessageInformationXmlParser $parser
      */
-    public function bodyText($value = null)
-    {
-        if ($value != null) {
-            $this->bodyText = (string)$value;
-        }
-        return $this->bodyText;
+    public function __construct(
+        Authentication\IAuthentication $authentication,
+        Http\IHttp $httpClient = null,
+        Parser\MessageInformationXmlParser $parser = null
+    ) {
+        $this->authentication = $authentication;
+        $this->httpClient = (isset($httpClient))
+            ? $httpClient
+            : new Http\HttpClient(true);
+        $this->parser = (isset($parser))
+            ? $parser
+            : new Parser\MessageInformationXmlParser();
     }
 
     /**
-     * @param string $value
-     * @return string
-     * @throws \Esendex\Exceptions\ArgumentException
+     * @param string $message
+     * @return Model\ResultItem
+     * @throws Exceptions\EsendexException
      */
-    public function characterSet($value = null)
+    public function getInformation($message, $characterSet = MessageBody::CharsetGSM)
     {
-        if ($value != null) {
-            if ($value != self::CharsetGSM && $value != self::CharsetUnicode) {
-                throw new ArgumentException(
-                    "characterSet() value was '{$value}' and must be either '" . 
-                    self::CharsetGSM . 
-                    "' or '" . 
-                    self::CharsetUnicode . 
-                    "'"
-                );
-            }
-            $this->characterSet = (string)$value;
-        }
-        return $this->characterSet;
-    }
+        $xml = $this->parser->encode($message, $characterSet);
+        $uri = Http\UriBuilder::serviceUri(
+            self::SERVICE_VERSION,
+            self::SERVICE,
+            null,
+            $this->httpClient->isSecure()
+        );
 
-    public function __toString()
-    {
-        return $this->bodyText;
+        $result = $this->httpClient->post(
+            $uri,
+            $this->authentication,
+            $xml
+        );
+
+        $arr = $this->parser->parse($result);
+
+        if (count($arr) == 1) {
+            return $arr[0];
+        } else {
+            throw new Exceptions\EsendexException("Error parsing the result", null, array('data_returned' => $result));
+        }
     }
 }
