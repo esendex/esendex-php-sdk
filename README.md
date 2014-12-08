@@ -1,6 +1,6 @@
 Esendex PHP Client
 ==================
-[![Latest Stable Version](https://poser.pugx.org/esendex/sdk/v/stable.png)](https://packagist.org/packages/esendex/sdk) [![Latest Unstable Version](https://poser.pugx.org/esendex/sdk/v/unstable.png)](https://packagist.org/packages/esendex/sdk) [![License](https://poser.pugx.org/esendex/sdk/license.png)](https://packagist.org/packages/esendex/sdk)
+[![Build Status](https://travis-ci.org/esendex/esendex-php-sdk.svg)](https://travis-ci.org/esendex/esendex-php-sdk) [![Latest Stable Version](https://poser.pugx.org/esendex/sdk/v/stable.png)](https://packagist.org/packages/esendex/sdk) [![Latest Unstable Version](https://poser.pugx.org/esendex/sdk/v/unstable.png)](https://packagist.org/packages/esendex/sdk) [![License](https://poser.pugx.org/esendex/sdk/license.png)](https://packagist.org/packages/esendex/sdk)
 
 ## Installation
 
@@ -19,9 +19,13 @@ The **esendex-php-sdk** is available to install through several methods as well 
 }
 ```
 
-We're in the default [`Packagist`](http://packagist.org/packages/esendex/sdk) repository so just add the snippet above to your *composer.json*
+We're in the default [`Packagist`](http://packagist.org/packages/esendex/sdk) repository so just run
+```bash
+$ php composer.phar require esendex/sdk:1.0.*
+```
+or add the snippet above to your *composer.json*
 
-Then just include the *autoload.php* somewhere in your code;
+Then just include the generated *autoload.php* somewhere in your code;
 ```php5
 require_once 'path/to/vendor/autoload.php';
 ```
