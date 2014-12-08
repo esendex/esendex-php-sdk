@@ -33,82 +33,64 @@
  * @link       https://github.com/esendex/esendex-php-sdk
  */
 namespace Esendex;
+
 use Esendex\Model\MessageBody;
 
-class MessageBodyService
+class MessageInformationService
 {
-    const SERVICE = "messageheaders";
+    const SERVICE = "messages/information";
     const SERVICE_VERSION = "v1.0";
 
     private $authentication;
     private $httpClient;
+    private $parser;
 
     /**
      * @param Authentication\IAuthentication $authentication
      * @param Http\IHttp $httpClient
+     * @param Parser\MessageInformationXmlParser $parser
      */
-    function __construct(Authentication\IAuthentication $authentication, Http\IHttp $httpClient = null)
-    {
+    public function __construct(
+        Authentication\IAuthentication $authentication,
+        Http\IHttp $httpClient = null,
+        Parser\MessageInformationXmlParser $parser = null
+    ) {
         $this->authentication = $authentication;
         $this->httpClient = (isset($httpClient))
             ? $httpClient
             : new Http\HttpClient(true);
+        $this->parser = (isset($parser))
+            ? $parser
+            : new Parser\MessageInformationXmlParser();
     }
 
     /**
-     * @param string|\Esendex\Model\ResultMessage $object
-     * @return string
-     * @throws Exceptions\ArgumentException
+     * @param string $message
+     * @return Model\ResultItem
+     * @throws Exceptions\EsendexException
      */
-    public function getMessageBody($object)
+    public function getInformation($message, $characterSet = MessageBody::CharsetGSM)
     {
-        if ($object instanceof \Esendex\Model\ResultMessage) {
-            return $this->loadMessageBody($object->bodyUri());
-        }
-
-        if (is_string($object)) {
-            return $this->loadMessageBody($object);
-        }
-
-        throw new Exceptions\ArgumentException("Should be either MessageBody Uri or ResultMessage");
-    }
-
-    /**
-     * @param string $messageId
-     * @return string
-     * @throws Exceptions\ArgumentException
-     */
-    public function getMessageBodyById($messageId)
-    {
-        if ($messageId == null) {
-            throw new Exceptions\ArgumentException("messageId is null");
-        }
-        if (!is_string($messageId)) {
-            throw new Exceptions\ArgumentException("messageId is not a string");
-        }
-
+        $xml = $this->parser->encode($message, $characterSet);
         $uri = Http\UriBuilder::serviceUri(
             self::SERVICE_VERSION,
             self::SERVICE,
-            array($messageId, "body"),
+            null,
             $this->httpClient->isSecure()
         );
 
-        return $this->loadMessageBody($uri);
-    }
-
-    private function loadMessageBody($uri)
-    {
-        $result = $this->httpClient->get(
+        $result = $this->httpClient->post(
             $uri,
-            $this->authentication
+            $this->authentication,
+            $xml
         );
 
-        $messageBody = simplexml_load_string($result);
+        $arr = $this->parser->parse($result);
 
-        $result = new MessageBody();
-        $result->bodyText($messageBody->bodytext);
-        $result->characterSet($messageBody->characterset);
-        return $result;
+        if (count($arr) == 1) {
+            return $arr[0];
+        } else {
+            throw new Exceptions\EsendexException("Error parsing the result", null, array('data_returned' => $result));
+        }
     }
 }

@@ -33,6 +33,7 @@
  * @link       https://github.com/esendex/esendex-php-sdk
  */
 namespace Esendex;
+use Esendex\Model\MessageBody;
 
 class MessageBodyServiceTest extends \PHPUnit_Framework_TestCase
 {
@@ -40,6 +41,7 @@ class MessageBodyServiceTest extends \PHPUnit_Framework_TestCase
 <?xml version="1.0" encoding="utf-8"?>
 <messagebody xmlns="http://api.esendex.com/ns/">
     <bodytext>Merci</bodytext>
+    <characterset>GSM</characterset>
 </messagebody>
 XML;
 
@@ -86,6 +88,9 @@ XML;
         $messageBody = $this->service->getMessageBodyById($this->messageId);
 
         $this->assertEquals("Merci", $messageBody);
+        $this->assertInstanceOf("\\Esendex\\Model\\MessageBody", $messageBody);
+        $this->assertEquals("Merci", $messageBody->bodyText());
+        $this->assertEquals(MessageBody::CharsetGSM, $messageBody->characterSet());
     }
 
     /**
@@ -113,12 +118,13 @@ XML;
      */
     function getMessageBodyWithMessageBodyUri()
     {
+        $bodyUri = "https://api.esendex.com/v1.0/messageheaders/{$this->messageId}/body";
         $this->httpUtil
             ->expects($this->once())
             ->method("get")
+            ->with($this->equalTo($bodyUri))
             ->will($this->returnValue(self::MESSAGEBODY_RESPONSE_XML));
 
-        $bodyUri = "https://api.esendex.com/v1.0/messageheaders/{$this->messageId}/body";
         $messageBody = $this->service->getMessageBody($bodyUri);
 
         $this->assertEquals("Merci", $messageBody);
@@ -129,13 +135,15 @@ XML;
      */
     function getMessageBodyWithMessageHeader()
     {
+        $bodyUri = "https://api.esendex.com/v1.0/messageheaders/{$this->messageId}/body";
         $this->httpUtil
             ->expects($this->once())
             ->method("get")
+            ->with($this->equalTo($bodyUri))
             ->will($this->returnValue(self::MESSAGEBODY_RESPONSE_XML));
 
         $messageHeader = new Model\SentMessage();
-        $messageHeader->bodyUri("https://api.esendex.com/v1.0/messageheaders/{$this->messageId}/body");
+        $messageHeader->bodyUri($bodyUri);
         $messageBody = $this->service->getMessageBody($messageHeader);
 
         $this->assertEquals("Merci", $messageBody);

@@ -35,6 +35,7 @@
 namespace Esendex\Parser;
 use Esendex\Model\Api;
 use Esendex\Model\Message;
+use Esendex\Model\MessageBody;
 use Esendex\Model\DispatchMessage;
 
 class DispatchXmlParserTest extends \PHPUnit_Framework_TestCase
@@ -81,7 +82,7 @@ XML;
         $result = $parser->encode($message);
 
         $this->assertEquals($expected, $result);
-    }    
+    }
     
     /**
      * @test
@@ -90,7 +91,7 @@ XML;
     {
         $reference = "EX123456";
         $message = new DispatchMessage(
-            "4412345678",
+            null,
             "4487654321",
             "Something to say",
             Message::VoiceType,
@@ -101,7 +102,6 @@ XML;
         $doc = new \SimpleXMLElement("<?xml version=\"1.0\" encoding=\"utf-8\"?><messages />", 0, false, Api::NS);
         $doc->addChild("accountreference", $reference);
         $child = $doc->addChild("message");
-        $child->addChild("from", $message->originator());
         $child->addChild("to", $message->recipient());
         $child->addChild("body", $message->body());
         $child->addChild("type", Message::VoiceType);
@@ -113,22 +113,69 @@ XML;
 
         $this->assertEquals($expected, $result);
     }
-
+    
+    function characterSets()
+    {
+        return array(array(MessageBody::CharsetGSM),
+                     array(MessageBody::CharsetUnicode),
+                     array(MessageBody::CharsetAuto));
+    }
+    
     /**
      * @test
+     * @dataProvider characterSets
      */
-    function encodeMessageInvalidOriginator()
+    function encodeCharacterSetMessage($charset)
     {
         $reference = "EX123456";
         $message = new DispatchMessage(
+            "4412345678",
+            "4487654321",
+            "Something to say",
+            Message::SmsType,
             null,
+            null,
+            $charset
+        );
+        $parser = new DispatchXmlParser($reference);
+        $doc = new \SimpleXMLElement("<?xml version=\"1.0\" encoding=\"utf-8\"?><messages />", 0, false, Api::NS);
+        $doc->addChild("accountreference", $reference);
+        $doc->addChild("characterset", $charset);
+        $child = $doc->addChild("message");
+        $child->addChild("from", $message->originator());
+        $child->addChild("to", $message->recipient());
+        $child->addChild("body", $message->body());
+        $child->addChild("type", Message::SmsType);
+        $expected = $doc->asXML();
+
+        $result = $parser->encode($message);
+
+        $this->assertEquals($expected, $result);
+    }
+    
+    function invalidOriginators()
+    {
+        return array(array("TooLongForAlpha", "Alphanumeric originator must <= 11 characters"),
+                     array("BadChars{}", "Alphanumeric originator contains invalid character(s)"),
+                     array("012345678901234567890", "Numeric originator must be <= 20 digits"));
+    }
+    
+    /**
+     * @test
+     * @dataProvider invalidOriginators
+     */
+    function encodeMessageInvalidOriginator($originator, $expectedMessage)
+    {
+        $reference = "EX123456";
+        $message = new DispatchMessage(
+            $originator,
             "4487654321",
             "Something to say",
             Message::SmsType
         );
         $parser = new DispatchXmlParser($reference);
 
-        $this->setExpectedException("\\Esendex\\Exceptions\\ArgumentException", "Originator is invalid");
+        $this->setExpectedException("\\Esendex\\Exceptions\\ArgumentException", $expectedMessage);
         $parser->encode($message);
     }
 
