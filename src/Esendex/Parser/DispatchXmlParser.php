@@ -68,6 +68,7 @@ class DispatchXmlParser
             throw new ArgumentException("Validity too long, must be less or equal to than 72");
 
         $doc = new \SimpleXMLElement("<?xml version=\"1.0\" encoding=\"utf-8\"?><messages />", 0, false, Api::NS);
+        $doc->addAttribute("xmlns", Api::NS);
         $doc->accountreference = $this->reference;
         if ($message->characterSet() != null)
             $doc->characterset = $message->characterSet();

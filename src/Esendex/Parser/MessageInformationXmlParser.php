@@ -63,9 +63,10 @@ class MessageInformationXmlParser
             false,
             Api::NS
         );
+        $doc->addAttribute("xmlns", Api::NS);
         $child = $doc->addChild("message");
-        $child->addChild("body", $message);
-        $child->addChild("characterset", $characterSet);
+        $child->body = $message;
+        $child->characterset = $characterSet;
         return $doc->asXML();
     }
 

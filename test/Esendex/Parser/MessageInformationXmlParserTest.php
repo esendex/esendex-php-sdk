@@ -58,6 +58,7 @@ class MessageInformationXmlParserTest extends \PHPUnit_Framework_TestCase
         $message = "the message";
         $parser = new MessageInformationXmlParser();
         $doc = new \SimpleXMLElement("<?xml version=\"1.0\" encoding=\"utf-8\"?><messages />", 0, false, Api::NS);
+        $doc->addAttribute("xmlns", Api::NS);
         $child = $doc->addChild("message");
         $child->addChild("body", $message);
         $child->addChild("characterset", $characterSet);
@@ -82,6 +83,21 @@ class MessageInformationXmlParserTest extends \PHPUnit_Framework_TestCase
         );
 
         $result = $parser->encode("a message", "Latin1");
+    }
+
+    /**
+     * @test
+     */
+    function encodeMessageBodyContainingXmlEntities()
+    {
+        $parser = new MessageInformationXmlParser();
+
+        $result = $parser->encode("This & <That>", MessageBody::CharsetAuto);
+        
+        $this->assertThat(
+            $result,
+            $this->stringContains("This &amp; &lt;That&gt;")
+        );
     }
 
     const RESPONSE_XML = <<<XML

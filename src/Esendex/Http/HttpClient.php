@@ -116,9 +116,11 @@ class HttpClient implements IHttp
         \curl_setopt($curlHandle, CURLOPT_CUSTOMREQUEST, $method);
         if ($method == 'PUT' || $method == 'POST') {
             \curl_setopt($curlHandle, CURLOPT_POSTFIELDS, $data);
+            \curl_setopt($curlHandle, CURLOPT_BINARYTRANSFER, true);
             if (strlen($data) == 0) {
                 $httpHeaders[] = 'Content-Length: 0';
             }
+            $httpHeaders[] = 'Content-Type: application/xml; charset=utf-8';
         }
         \curl_setopt($curlHandle, CURLOPT_HTTPHEADER, $httpHeaders);
 
