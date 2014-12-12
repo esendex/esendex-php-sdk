@@ -33,6 +33,7 @@
  * @link       https://github.com/esendex/esendex-php-sdk
  */
 namespace Esendex\Parser;
+
 use Esendex\Model\Account;
 
 class AccountXmlParserTest extends \PHPUnit_Framework_TestCase
@@ -89,7 +90,7 @@ XML;
         $this->assertEquals("Professional", $result[0]->type());
         $this->assertEquals(19, $result[0]->messagesRemaining());
         $this->assertEquals(
-            \DateTime::createFromFormat(DATE_ISO8601, "2099-09-04T00:00:00"),
+            \DateTime::createFromFormat(\DateTime::ISO8601, "2099-09-04T00:00:00Z"),
             $result[0]->expiresOn()
         );
         $this->assertEquals("34", $result[0]->defaultDialCode());
@@ -102,7 +103,7 @@ XML;
         $this->assertEquals("Broadcast", $result[1]->type());
         $this->assertEquals(0, $result[1]->messagesRemaining());
         $this->assertEquals(
-            \DateTime::createFromFormat(DATE_ISO8601, "2016-06-30T13:25:15"),
+            \DateTime::createFromFormat(\DateTime::ISO8601, "2016-06-30T13:25:15Z"),
             $result[1]->expiresOn()
         );
         $this->assertEquals("44", $result[1]->defaultDialCode());

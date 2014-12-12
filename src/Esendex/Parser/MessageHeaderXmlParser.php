@@ -33,6 +33,7 @@
  * @link       https://github.com/esendex/esendex-php-sdk
  */
 namespace Esendex\Parser;
+
 use Esendex\Model\Message;
 use Esendex\Model\SentMessage;
 use Esendex\Model\InboxMessage;
@@ -78,13 +79,13 @@ class MessageHeaderXmlParser
 
         return $result;
     }
-	
+
     private function parseDateTime($value)
     {
-    		$value = (strlen($value) > 20)
-		      	? substr($value, 0, 19) . "Z"
-		      	: $value;
-			
-        return \DateTime::createFromFormat(DATE_ISO8601, $value);
+        $value = (strlen($value) > 20)
+            ? substr($value, 0, 19) . "Z"
+            : $value;
+
+        return \DateTime::createFromFormat(\DateTime::ISO8601, $value);
     }
 }

@@ -33,6 +33,7 @@
  * @link       https://github.com/esendex/esendex-php-sdk
  */
 namespace Esendex\Parser;
+
 use Esendex\Model\Account;
 
 class AccountXmlParser
@@ -61,13 +62,13 @@ class AccountXmlParser
         $result->defaultDialCode($account->defaultdialcode);
         return $result;
     }
-	
+
     private function parseDateTime($value)
     {
-    		$value = (strlen($value) > 20)
-		      	? substr($value, 0, 19) . "Z"
-		      	: $value;
-			
-        return \DateTime::createFromFormat(DATE_ISO8601, $value);
+        $value = (strlen($value) < 20)
+            ? $value . "Z"
+            : substr($value, 0, 19) . "Z";
+
+        return \DateTime::createFromFormat(\DateTime::ISO8601, $value);
     }
 }
