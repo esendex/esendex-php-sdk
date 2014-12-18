@@ -34,58 +34,58 @@
  */
 namespace Esendex\Parser;
 
-use Esendex\Model\Message;
-use Esendex\Model\SentMessage;
-use Esendex\Model\InboxMessage;
+use Esendex\Exceptions\ArgumentException;
+use Esendex\Model\Api;
+use Esendex\Model\MessageBody;
+use Esendex\Model\MessageInformation;
 
-class MessageHeaderXmlParser
+class MessageInformationXmlParser
 {
-    public function parse($xml)
+    public function encode($message, $characterSet)
     {
-        $header = simplexml_load_string($xml);
-        return $this->parseHeader($header);
-    }
-
-    public function parseHeader($header)
-    {
-        $direction = $header->direction;
-        $result = ($direction == Message::Inbound)
-            ? new InboxMessage()
-            : new SentMessage();
-
-        $result->id($header["id"]);
-        $result->originator($header->from->phonenumber);
-        $result->recipient($header->to->phonenumber);
-        $result->status($header->status);
-        $result->type($header->type);
-        $result->direction($direction);
-        $result->parts($header->parts);
-        $result->bodyUri($header->body["uri"]);
-        $result->summary($header->summary);
-        $result->lastStatusAt($this->parseDateTime($header->laststatusat));
-        if ($direction == Message::Outbound) {
-            $result->submittedAt($this->parseDateTime($header->submittedat));
-            $result->sentAt($this->parseDateTime($header->sentat));
-            $result->deliveredAt($this->parseDateTime($header->deliveredat));
-            $result->username($header->username);
-        } else {
-            $result->receivedAt($this->parseDateTime($header->receivedat));
-            $readAt = $header->readat;
-            if (substr($readAt, 0, 2) != "00") {
-                $result->readAt($this->parseDateTime($readAt));
-                $result->readBy($header->readby);
-            }
+        if ($characterSet != MessageBody::CharsetGSM &&
+            $characterSet != MessageBody::CharsetUnicode &&
+            $characterSet != MessageBody::CharsetAuto) {
+            throw new ArgumentException(
+                "characterSet value was '{$characterSet}' and must be one of '" .
+                MessageBody::CharsetGSM .
+                "', '" .
+                MessageBody::CharsetUnicode .
+                "' or '" .
+                MessageBody::CharsetAuto .
+                "'"
+            );
         }
 
+        $doc = new \SimpleXMLElement(
+            "<?xml version=\"1.0\" encoding=\"utf-8\"?><messages />",
+            0,
+            false,
+            Api::NS
+        );
+        $doc->addAttribute("xmlns", Api::NS);
+        $child = $doc->addChild("message");
+        $child->body = $message;
+        $child->characterset = $characterSet;
+        return $doc->asXML();
+    }
+
+    public function parse($xml)
+    {
+        $response = simplexml_load_string($xml);
+        $result = array();
+        foreach ($response->messages->message as $message) {
+            $result[] = $this->parseMessageInformation($message);
+        }
         return $result;
     }
 
-    private function parseDateTime($value)
+    private function parseMessageInformation($message)
     {
-        $value = (strlen($value) > 20)
-            ? substr($value, 0, 19) . "Z"
-            : $value;
-
-        return \DateTime::createFromFormat(\DateTime::ISO8601, $value);
+        $result = new MessageInformation();
+        $result->parts($message->parts);
+        $result->characterSet($message->characterset);
+        $result->availableCharactersInLastPart($message->availablecharactersinlastpart);
+        return $result;
     }
 }

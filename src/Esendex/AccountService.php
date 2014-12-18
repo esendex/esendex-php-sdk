@@ -33,82 +33,71 @@
  * @link       https://github.com/esendex/esendex-php-sdk
  */
 namespace Esendex;
-use Esendex\Model\MessageBody;
 
-class MessageBodyService
+class AccountService
 {
-    const SERVICE = "messageheaders";
-    const SERVICE_VERSION = "v1.0";
+    const ACCOUNT_SERVICE = 'accounts';
+    const ACCOUNT_SERVICE_VERSION = 'v1.0';
 
     private $authentication;
     private $httpClient;
+    private $parser;
 
     /**
      * @param Authentication\IAuthentication $authentication
      * @param Http\IHttp $httpClient
+     * @param Parser\AccountXmlParser $parser
      */
-    function __construct(Authentication\IAuthentication $authentication, Http\IHttp $httpClient = null)
-    {
+    public function __construct(
+        Authentication\IAuthentication $authentication,
+        Http\IHttp $httpClient = null,
+        Parser\AccountXmlParser $parser = null
+    ) {
         $this->authentication = $authentication;
         $this->httpClient = (isset($httpClient))
             ? $httpClient
             : new Http\HttpClient(true);
+        $this->parser = (isset($parser))
+            ? $parser
+            : new Parser\AccountXmlParser();
     }
 
     /**
-     * @param string|\Esendex\Model\ResultMessage $object
-     * @return string
-     * @throws Exceptions\ArgumentException
+     * @param string $reference
+     * @return Model\Account
      */
-    public function getMessageBody($object)
+    public function getAccount($reference = null)
     {
-        if ($object instanceof \Esendex\Model\ResultMessage) {
-            return $this->loadMessageBody($object->bodyUri());
+        $target = isset($reference)
+            ? $reference
+            : $this->authentication->accountReference();
+            
+        $accounts = $this->getAccounts();
+        foreach ($accounts as $account) {
+            if (strcasecmp($account->reference(), $target) == 0) {
+                return $account;
+            }
         }
-
-        if (is_string($object)) {
-            return $this->loadMessageBody($object);
-        }
-
-        throw new Exceptions\ArgumentException("Should be either MessageBody Uri or ResultMessage");
+        return null;
     }
 
     /**
-     * @param string $messageId
-     * @return string
-     * @throws Exceptions\ArgumentException
+     * @return Model\Account[]
      */
-    public function getMessageBodyById($messageId)
+    public function getAccounts()
     {
-        if ($messageId == null) {
-            throw new Exceptions\ArgumentException("messageId is null");
-        }
-        if (!is_string($messageId)) {
-            throw new Exceptions\ArgumentException("messageId is not a string");
-        }
-
         $uri = Http\UriBuilder::serviceUri(
-            self::SERVICE_VERSION,
-            self::SERVICE,
-            array($messageId, "body"),
+            self::ACCOUNT_SERVICE_VERSION,
+            self::ACCOUNT_SERVICE,
+            null,
             $this->httpClient->isSecure()
         );
-
-        return $this->loadMessageBody($uri);
-    }
-
-    private function loadMessageBody($uri)
-    {
-        $result = $this->httpClient->get(
+        
+        $data = $this->httpClient->get(
             $uri,
             $this->authentication
         );
 
-        $messageBody = simplexml_load_string($result);
-
-        $result = new MessageBody();
-        $result->bodyText($messageBody->bodytext);
-        $result->characterSet($messageBody->characterset);
-        return $result;
+        return $this->parser->parse($data);
     }
 }

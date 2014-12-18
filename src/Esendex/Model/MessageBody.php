@@ -25,67 +25,62 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
- * @category   Parser
+ * @category   Model
  * @package    Esendex
  * @author     Esendex Support <support@esendex.com>
  * @copyright  2013 Esendex Ltd.
  * @license    http://opensource.org/licenses/BSD-3-Clause  BSD 3-Clause
  * @link       https://github.com/esendex/esendex-php-sdk
  */
-namespace Esendex\Parser;
+namespace Esendex\Model;
 
-use Esendex\Model\Message;
-use Esendex\Model\SentMessage;
-use Esendex\Model\InboxMessage;
+use Esendex\Exceptions\ArgumentException;
 
-class MessageHeaderXmlParser
+class MessageBody
 {
-    public function parse($xml)
-    {
-        $header = simplexml_load_string($xml);
-        return $this->parseHeader($header);
-    }
+    const CharsetGSM = "GSM";
+    const CharsetUnicode = "Unicode";
+    const CharsetAuto = "Auto";
+    
+    private $bodyText;
+    private $characterSet;
 
-    public function parseHeader($header)
+    /**
+     * @param string $value
+     * @return string
+     */
+    public function bodyText($value = null)
     {
-        $direction = $header->direction;
-        $result = ($direction == Message::Inbound)
-            ? new InboxMessage()
-            : new SentMessage();
-
-        $result->id($header["id"]);
-        $result->originator($header->from->phonenumber);
-        $result->recipient($header->to->phonenumber);
-        $result->status($header->status);
-        $result->type($header->type);
-        $result->direction($direction);
-        $result->parts($header->parts);
-        $result->bodyUri($header->body["uri"]);
-        $result->summary($header->summary);
-        $result->lastStatusAt($this->parseDateTime($header->laststatusat));
-        if ($direction == Message::Outbound) {
-            $result->submittedAt($this->parseDateTime($header->submittedat));
-            $result->sentAt($this->parseDateTime($header->sentat));
-            $result->deliveredAt($this->parseDateTime($header->deliveredat));
-            $result->username($header->username);
-        } else {
-            $result->receivedAt($this->parseDateTime($header->receivedat));
-            $readAt = $header->readat;
-            if (substr($readAt, 0, 2) != "00") {
-                $result->readAt($this->parseDateTime($readAt));
-                $result->readBy($header->readby);
-            }
+        if ($value != null) {
+            $this->bodyText = (string)$value;
         }
-
-        return $result;
+        return $this->bodyText;
     }
 
-    private function parseDateTime($value)
+    /**
+     * @param string $value
+     * @return string
+     * @throws \Esendex\Exceptions\ArgumentException
+     */
+    public function characterSet($value = null)
     {
-        $value = (strlen($value) > 20)
-            ? substr($value, 0, 19) . "Z"
-            : $value;
+        if ($value != null) {
+            if ($value != self::CharsetGSM && $value != self::CharsetUnicode) {
+                throw new ArgumentException(
+                    "characterSet() value was '{$value}' and must be either '" . 
+                    self::CharsetGSM . 
+                    "' or '" . 
+                    self::CharsetUnicode . 
+                    "'"
+                );
+            }
+            $this->characterSet = (string)$value;
+        }
+        return $this->characterSet;
+    }
 
-        return \DateTime::createFromFormat(\DateTime::ISO8601, $value);
+    public function __toString()
+    {
+        return $this->bodyText;
     }
 }

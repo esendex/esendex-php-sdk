@@ -33,6 +33,7 @@
  * @link       https://github.com/esendex/esendex-php-sdk
  */
 namespace Esendex\Parser;
+
 use Esendex\Model\Message;
 
 class MessageHeaderXmlParserTest extends \PHPUnit_Framework_TestCase
@@ -72,7 +73,7 @@ XML;
         $parser = new MessageHeaderXmlParser();
 
         $result = $parser->parse(self::OUTBOUND_RESPONSE_XML);
-
+        
         $this->assertInstanceOf("\\Esendex\\Model\\SentMessage", $result);
 
         $this->assertEquals("a22702be-881e-43d9-9790-7646a95335f6", $result->id());
@@ -88,20 +89,20 @@ XML;
         );
         $this->assertEquals("Every message matters", $result->summary());
         $this->assertEquals(
-            \DateTime::createFromFormat(DATE_ISO8601, "2013-03-06T13:20:00Z"),
+            \DateTime::createFromFormat(\DateTime::ISO8601, "2013-03-06T13:20:00Z"),
             $result->lastStatusAt()
         );
 
         $this->assertEquals(
-            \DateTime::createFromFormat(DATE_ISO8601, "2013-03-06T13:18:25Z"),
+            \DateTime::createFromFormat(\DateTime::ISO8601, "2013-03-06T13:18:25Z"),
             $result->submittedAt()
         );
         $this->assertEquals(
-            \DateTime::createFromFormat(DATE_ISO8601, "2013-03-06T13:19:20Z"),
+            \DateTime::createFromFormat(\DateTime::ISO8601, "2013-03-06T13:19:20Z"),
             $result->sentAt()
         );
         $this->assertEquals(
-            \DateTime::createFromFormat(DATE_ISO8601, "2013-03-06T13:20:00Z"),
+            \DateTime::createFromFormat(\DateTime::ISO8601, "2013-03-06T13:20:00Z"),
             $result->deliveredAt()
         );
         $this->assertEquals("support@esendex.com", $result->username());
@@ -159,12 +160,12 @@ XML;
         );
         $this->assertEquals("Every message matters", $result->summary());
         $this->assertEquals(
-            \DateTime::createFromFormat(DATE_ISO8601, "2013-03-06T14:30:42Z"),
+            \DateTime::createFromFormat(\DateTime::ISO8601, "2013-03-06T14:30:42Z"),
             $result->lastStatusAt()
         );
 
         $this->assertEquals(
-            \DateTime::createFromFormat(DATE_ISO8601, "2013-03-06T14:30:42Z"),
+            \DateTime::createFromFormat(\DateTime::ISO8601, "2013-03-06T14:30:42Z"),
             $result->receivedAt()
         );
         $this->assertNull($result->readAt());
@@ -187,7 +188,7 @@ XML;
         $result = $parser->parse($message->asXML());
 
         $this->assertEquals(
-            \DateTime::createFromFormat(DATE_ISO8601, $readAt),
+            \DateTime::createFromFormat(\DateTime::ISO8601, $readAt),
             $result->readAt()
         );
         $this->assertEquals($readBy, $result->readBy());
