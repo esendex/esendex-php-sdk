@@ -78,13 +78,13 @@
 
     <target name="install_dependencies">
         <exec executable="php" dir="." checkreturn="true">
-            <arg line="composer.phar install"/>
+            <arg line="composer install"/>
         </exec>
     </target>
 
     <target name="install_dev_dependencies">
         <exec executable="php" dir="." checkreturn="true">
-            <arg line="composer.phar install --dev"/>
+            <arg line="composer install --dev"/>
         </exec>
     </target>
 
@@ -100,7 +100,7 @@
                 <include name="test/**"/>
                 <exclude name="*"/>
             </fileset>
-            <filelist dir="./" files="build.xml,composer.json,composer.phar,LICENSE,phing-latest.phar"/>
+            <filelist dir="./" files="build.xml,composer.json,LICENSE,phing-latest.phar"/>
         </copy>
         <mkdir dir="./build/Esendex"/>
         <copy todir="./build/Esendex">

@@ -3,5 +3,7 @@ php:
   - 5.5
   - 5.4
   - 5.3
-before-script: echo 'date.timezone = "Europe/London"' >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
+before-script:
+  - echo 'date.timezone = "Europe/London"' >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
+  - composer install
 script: php phing-latest.phar
