@@ -77,14 +77,14 @@
     </target>
 
     <target name="install_dependencies">
-        <exec executable="php" dir="." checkreturn="true">
-            <arg line="composer install"/>
+        <exec executable="composer" checkreturn="true">
+            <arg value="install --no-dev" />
         </exec>
     </target>
 
     <target name="install_dev_dependencies">
-        <exec executable="php" dir="." checkreturn="true">
-            <arg line="composer install --dev"/>
+        <exec executable="composer" checkreturn="true">
+            <arg value="install" />
         </exec>
     </target>
 
