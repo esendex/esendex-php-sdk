@@ -23,7 +23,7 @@ Composer is not included within the repository, so you will need to retrieve it 
 curl -sS https://getcomposer.org/installer | php
 ```
 
-For installation on other platforms see [getcomposer.org](https://getcomposer.org/installer)
+For installation on other platforms see [getcomposer.org](https://getcomposer.org)
 
 We're in the default [`Packagist`](http://packagist.org/packages/esendex/sdk) repository so just run
 ```bash
