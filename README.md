@@ -29,7 +29,7 @@ We're in the default [`Packagist`](http://packagist.org/packages/esendex/sdk) re
 ```bash
 $ php composer.phar require esendex/sdk:1.0.*
 ```
-or add the snippet above to your *composer.json*
+or add the package above to your *composer.json*
 
 Then just include the generated *autoload.php* somewhere in your code;
 ```php5
