@@ -10,7 +10,7 @@
     </target>
 
     <target name="test"
-            depends="install_dev_dependencies, prepare"
+            depends="prepare"
             description="Run all the tests">
         <exec executable="./vendor/bin/phpunit" dir="." checkreturn="true" logoutput="true">
             <arg line="--log-junit"/>
@@ -79,12 +79,6 @@
     <target name="install_dependencies">
         <exec executable="composer" checkreturn="true">
             <arg value="install --no-dev" />
-        </exec>
-    </target>
-
-    <target name="install_dev_dependencies">
-        <exec executable="composer" checkreturn="true">
-            <arg value="install" />
         </exec>
     </target>
 

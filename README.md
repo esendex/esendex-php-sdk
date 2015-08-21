@@ -18,6 +18,10 @@ The **esendex-php-sdk** is available to install through several methods as well 
     }
 }
 ```
+Composer is not included within the repository, so you will need to retrieve it using the following command:
+```bash
+curl -sS https://getcomposer.org/installer | php
+```
 
 We're in the default [`Packagist`](http://packagist.org/packages/esendex/sdk) repository so just run
 ```bash
@@ -120,9 +124,20 @@ Full REST API documentation can be found @ [developers.esendex.com](http://devel
 
 ## Testing
 #### Unit Tests
+
+You will need to install composer in order to acquire the pre-requisites. This can be achieved by the following command:
+```bash
+curl -sS https://getcomposer.org/installer | php
+```
+
+To retrieve said pre-requisites execute the following:
+```bash
+composer.phar install
+```
+
 A suite of tests can be found in the `test` directory. To run them use the [phing](http://www.phing.info) build utility. e.g.
 ```bash
-$ php phing-latest.phar
+$ php vendor/phing/phing/bin/phing
 ```
 
 #### Credentials Test
