@@ -87,7 +87,7 @@
                 <include name="test/**"/>
                 <exclude name="*"/>
             </fileset>
-            <filelist dir="./" files="build.xml,composer.json,LICENSE,phing-latest.phar"/>
+            <filelist dir="./" files="build.xml,composer.json,LICENSE"/>
         </copy>
         <mkdir dir="./build/Esendex"/>
         <copy todir="./build/Esendex">
