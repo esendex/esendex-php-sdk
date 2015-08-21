@@ -23,6 +23,8 @@ Composer is not included within the repository, so you will need to retrieve it 
 curl -sS https://getcomposer.org/installer | php
 ```
 
+For installation on other platforms see [getcomposer.org](https://getcomposer.org/installer)
+
 We're in the default [`Packagist`](http://packagist.org/packages/esendex/sdk) repository so just run
 ```bash
 $ php composer.phar require esendex/sdk:1.0.*
@@ -137,7 +139,7 @@ composer.phar install
 
 A suite of tests can be found in the `test` directory. To run them use the [phing](http://www.phing.info) build utility. e.g.
 ```bash
-$ php vendor/phing/phing/bin/phing
+$ php vendor/bin/phing
 ```
 
 #### Credentials Test
