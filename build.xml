@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="EsendexSDK" default="test" phingVersion="2.4.2">
     <target name="check-access"
-            depends="install_dependencies"
             description="Validate your credentials">
         <input propertyName="username" message="Esendex Username " promptChar="?"/>
         <input propertyName="password" message="Esendex Password " promptChar="?"/>
@@ -73,12 +72,6 @@
         
         <exec executable="git" dir="./build" checkreturn="true">
             <arg line="rev-parse HEAD >version.info"/>
-        </exec>
-    </target>
-
-    <target name="install_dependencies">
-        <exec executable="composer" checkreturn="true">
-            <arg value="install --no-dev" />
         </exec>
     </target>
 

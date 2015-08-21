@@ -141,13 +141,14 @@ $ php vendor/phing/phing/bin/phing
 ```
 
 #### Credentials Test
-You can check your account credentials using a phing task we have provided.
+You can check your account credentials using a phing task we have provided. First, ensure dependencies have been installed with composer:
 ```bash
-$ php phing-latest.phar check-access
+$ composer install
+```
+Run the `check-access` script:
+```bash
+$ php vendor/bin/phing check-access
 Buildfile: /home/developer/esendex-php-sdk/build.xml
-
-EsendexSDK > install_dependencies:
-
 
 EsendexSDK > check-access:
 
