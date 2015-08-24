@@ -129,12 +129,12 @@ Full REST API documentation can be found @ [developers.esendex.com](http://devel
 
 You will need to install composer in order to acquire the pre-requisites. This can be achieved by the following command:
 ```bash
-curl -sS https://getcomposer.org/installer | php
+$ curl -sS https://getcomposer.org/installer | php
 ```
 
 To retrieve said pre-requisites execute the following:
 ```bash
-composer.phar install
+$ composer.phar install
 ```
 
 A suite of tests can be found in the `test` directory. To run them use the [phing](http://www.phing.info) build utility. e.g.
@@ -145,11 +145,11 @@ $ php vendor/bin/phing
 #### Credentials Test
 You can check your account credentials using a phing task we have provided. First, ensure dependencies have been installed with composer:
 ```bash
-$ composer install
+$ composer.phar install
 ```
 Run the `check-access` script:
 ```bash
-$ php vendor/bin/phing check-access
+$ vendor/bin/phing check-access
 Buildfile: /home/developer/esendex-php-sdk/build.xml
 
 EsendexSDK > check-access:
