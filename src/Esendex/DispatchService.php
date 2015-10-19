@@ -66,12 +66,14 @@ class DispatchService
 
     /**
      * @param Model\DispatchMessage $message
+     * @param string $sendAt GMT date to send the message (ISO 8601 : "Y-m-d\TH:i:s\Z")
      * @return Model\ResultItem
      * @throws Exceptions\EsendexException
      */
-    public function send(Model\DispatchMessage $message)
+    public function send(Model\DispatchMessage $message, $sendAt = null)
     {
-        $xml = $this->parser->encode($message);
+        $xml = $this->parser->encode($message, $sendAt);
+
         $uri = Http\UriBuilder::serviceUri(
             self::DISPATCH_SERVICE_VERSION,
             self::DISPATCH_SERVICE,
