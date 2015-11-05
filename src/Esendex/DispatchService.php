@@ -66,11 +66,11 @@ class DispatchService
 
     /**
      * @param Model\DispatchMessage $message
-     * @param string $sendAt GMT date to send the message (ISO 8601 : "Y-m-d\TH:i:s\Z")
+     * @param \DateTime $sendAt A date and time for which to schedule the message to send
      * @return Model\ResultItem
      * @throws Exceptions\EsendexException
      */
-    public function send(Model\DispatchMessage $message, $sendAt = null)
+    public function send(Model\DispatchMessage $message, \DateTime $sendAt = null)
     {
         $xml = $this->parser->encode($message, $sendAt);
 

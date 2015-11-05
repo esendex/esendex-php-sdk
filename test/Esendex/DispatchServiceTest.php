@@ -111,6 +111,47 @@ class DispatchServiceTest extends \PHPUnit_Framework_TestCase
     /**
      * @test
      */
+    function sendAtSuccess()
+    {
+        $message = new Model\DispatchMessage("Another Test", "447123456789", "This is the body text", Model\Message::SmsType);
+        $sendAt = new \DateTime('2015-05-11T12:48:00', new \DateTimeZone('UTC'));
+        $request = "xml request";
+        $response = "xml response";
+        $resultItem = new \Esendex\Model\ResultItem(
+            "97d6f0b1-ca2c-4436-aa08-025aba71705c",
+            "https://api.esendex.com/v1.0/MessageHeaders/97d6f0b1-ca2c-4436-aa08-025aba71705c"
+        );
+
+        $this->parser
+            ->expects($this->once())
+            ->method("encode")
+            ->with($this->equalTo($message), $this->equalTo($sendAt))
+            ->will($this->returnValue($request));
+        $this->httpUtil
+            ->expects($this->once())
+            ->method("post")
+            ->with(
+            $this->equalTo(
+                "https://api.esendex.com/v1.0/messagedispatcher"
+            ),
+            $this->equalTo($this->authentication),
+            $this->equalTo($request)
+        )
+            ->will($this->returnValue($response));
+        $this->parser
+            ->expects($this->once())
+            ->method("parse")
+            ->with($this->equalTo($response))
+            ->will($this->returnValue(array($resultItem)));
+
+        $result = $this->service->send($message, $sendAt);
+
+        $this->assertSame($resultItem, $result);
+    }
+
+    /**
+     * @test
+     */
     function sendFailure()
     {
         $message = new Model\DispatchMessage("DispatcherTest", "447712345678", "Message Body", Model\Message::SmsType);

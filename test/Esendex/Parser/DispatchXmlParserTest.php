@@ -88,6 +88,40 @@ XML;
     /**
      * @test
      */
+    function encodeMessageWithSendAt()
+    {
+        $reference = "EX123456";
+        $sendAt = new \DateTime('2015-10-31T01:02:03');
+        $message = new DispatchMessage(
+            "4412345678",
+            "4487654321",
+            "Something to say",
+            Message::SmsType,
+            24,
+            DispatchMessage::ENGLISH_LANGUAGE
+        );
+        $parser = new DispatchXmlParser($reference);
+        $doc = new \SimpleXMLElement("<?xml version=\"1.0\" encoding=\"utf-8\"?><messages />", 0, false, Api::NS);
+        $doc->addAttribute("xmlns", Api::NS);
+        $doc->addChild("accountreference", $reference);
+        $doc->addChild("sendat", "2015-10-31T01:02:03+00:00");
+        $child = $doc->addChild("message");
+        $child->addChild("from", $message->originator());
+        $child->addChild("to", $message->recipient());
+        $child->addChild("body", $message->body());
+        $child->addChild("type", Message::SmsType);
+        $child->addChild("validity", $message->validityPeriod());
+        $child->addChild("lang", $message->language());
+        $expected = $doc->asXML();
+
+        $result = $parser->encode($message, $sendAt);
+
+        $this->assertEquals($expected, $result);
+    }
+    
+    /**
+     * @test
+     */
     function encodeVoiceMessage()
     {
         $reference = "EX123456";

@@ -51,11 +51,11 @@ class DispatchXmlParser
     /**
      *
      * @param \Esendex\Model\DispatchMessage $message
-     * @param string $sendAt GMT date to send the message (ISO 8601 : "Y-m-d\TH:i:s\Z")
+     * @param \DateTime $sendAt A date and time for which to schedule the message
      * @return string XML content
      * @throws ArgumentException
      */
-    public function encode(\Esendex\Model\DispatchMessage $message, $sendAt = null)
+    public function encode(\Esendex\Model\DispatchMessage $message, \DateTime $sendAt = null)
     {
         if ($message->originator() != null) {
             if (ctype_digit($message->originator())) {
@@ -81,8 +81,8 @@ class DispatchXmlParser
         $doc = new \SimpleXMLElement("<?xml version=\"1.0\" encoding=\"utf-8\"?><messages />", 0, false, Api::NS);
         $doc->addAttribute("xmlns", Api::NS);
         $doc->accountreference = $this->reference;
-        if ($sendAt != null && $this->validateDate($sendAt)) {
-            $doc->sendat = $sendAt;
+        if ($sendAt != null) {
+            $doc->sendat = $sendAt->format('c');
         }
         if ($message->characterSet() != null) {
             $doc->characterset = $message->characterSet();
@@ -118,27 +118,6 @@ class DispatchXmlParser
         }
 
         return $results;
-    }
-
-    /**
-     * Validate GMT date
-     * @param string $date Date to validate
-     * @return boolean <b>TRUE</b> if date validated, <b>FALSE</b> else
-     */
-    protected function validateDate($date)
-    {
-        if (preg_match('/^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})Z$/', $date, $parts) == true) {
-            $time = gmmktime($parts[4], $parts[5], $parts[6], $parts[2], $parts[3], $parts[1]);
-
-            $inputTime = strtotime($date);
-            if ($inputTime === false) {
-                return false;
-            }
-
-            return $inputTime == $time;
-        } else {
-            return false;
-        }
     }
 
 }
