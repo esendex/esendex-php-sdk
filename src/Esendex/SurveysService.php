@@ -65,11 +65,12 @@ class SurveysService
      */
     public function send($surveyId, $phoneNumber, $templateFields = null)
     {
-        $data = array("recipients" => [array(
-                        "phonenumber" => $phoneNumber,
-                        "templatefields" => $templateFields
-                        )
-                      ]);
+        $data = array("recipients" => array(
+          array(
+            "phonenumber" => $phoneNumber,
+            "templatefields" => $templateFields
+          )
+        ));
         
         $json = json_encode($data);
         $uri = "https://api.surveys.esendex.com/v1.0/surveys/{$surveyId}/send";
