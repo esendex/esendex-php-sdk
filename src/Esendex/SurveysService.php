@@ -71,42 +71,13 @@ class SurveysService
             "templatefields" => $templateFields
           )
         ));
-        
-        $json = json_encode($data);
+         
         $uri = "https://api.surveys.esendex.com/v1.0/surveys/{$surveyId}/send";
 
-        $result = $this->httpClient->post(
+        $this->httpClient->post(
             $uri,
             $this->authentication,
-            $json
+            json_encode($data)
         );
-    }
-
-    /**
-     * Get the number of remaining credits for your account
-     *
-     * @return int
-     */
-    public function getCredits()
-    {
-        try {
-            $uri = Http\UriBuilder::serviceUri(
-                self::ACCOUNTS_SERVICE_VERSION,
-                self::ACCOUNTS_SERVICE,
-                null,
-                $this->httpClient->isSecure()
-            );
-
-            $xml = $this->httpClient->get($uri, $this->authentication);
-            $accounts = new \SimpleXMLElement($xml);
-            foreach ($accounts->account as $account) {
-                if (strcasecmp($account->reference, $this->authentication->accountReference()) == 0) {
-                    return intval($account->messagesremaining, 10);
-                }
-            }
-            return 0;
-        } catch (\Exception $e) {
-            return 0;
-        }
     }
 }
