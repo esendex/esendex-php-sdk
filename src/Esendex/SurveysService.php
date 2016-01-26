@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright (c) 2013, Esendex Ltd.
+ * Copyright (c) 2016, Esendex Ltd.
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without
@@ -28,7 +28,7 @@
  * @category   Service
  * @package    Esendex
  * @author     Esendex Support <support@esendex.com>
- * @copyright  2013 Esendex Ltd.
+ * @copyright  2016 Esendex Ltd.
  * @license    http://opensource.org/licenses/BSD-3-Clause  BSD 3-Clause
  * @link       https://github.com/esendex/esendex-php-sdk
  */
@@ -36,9 +36,6 @@ namespace Esendex;
 
 class SurveysService
 {
-    const SURVEYS_SERVICE = "surveys";
-    const SURVEYS_SERVICE_VERSION = "v1.0";
-
     private $authentication;
     private $httpClient;
     private $parser;
@@ -74,7 +71,7 @@ class SurveysService
          
         $uri = "https://api.surveys.esendex.com/v1.0/surveys/{$surveyId}/send";
 
-        $this->httpClient->post(
+        $this->httpClient->postJson(
             $uri,
             $this->authentication,
             json_encode($data)

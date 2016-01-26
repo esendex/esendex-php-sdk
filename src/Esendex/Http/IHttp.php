@@ -44,6 +44,8 @@ interface IHttp
     function put($url, IAuthentication $authentication, $data);
 
     function post($url, IAuthentication $authentication, $data);
+    
+    function postJson($url, IAuthentication $authentication, $data);
 
     function delete($url, IAuthentication $authentication);
 }

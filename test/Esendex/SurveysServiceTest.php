@@ -73,13 +73,13 @@ class SurveysServiceTest extends \PHPUnit_Framework_TestCase
       $recipient = "447712345678";
         $this->httpUtil
             ->expects($this->once())
-            ->method("post")
+            ->method("postJson")
             ->with(
               $this->equalTo(
                   "https://api.surveys.esendex.com/v1.0/surveys/{$surveyId}/send"
               ),
               $this->equalTo($this->authentication),
-    $this->equalTo("{\"recipients\":[{\"phonenumber\":\"{$recipient}\",\"templatefields\":null}]}")
+              $this->equalTo("{\"recipients\":[{\"phonenumber\":\"{$recipient}\",\"templatefields\":null}]}")
             )
             ->will($this->returnValue(true));
 
@@ -100,13 +100,13 @@ class SurveysServiceTest extends \PHPUnit_Framework_TestCase
         
         $this->httpUtil
             ->expects($this->once())
-            ->method("post")
+            ->method("postJson")
             ->with(
               $this->equalTo(
                   "https://api.surveys.esendex.com/v1.0/surveys/{$surveyId}/send"
               ),
               $this->equalTo($this->authentication),
-    $this->equalTo("{\"recipients\":[{\"phonenumber\":\"{$recipient}\",\"templatefields\":{\"{$fieldName}\":\"{$fieldValue}\",\"{$fieldName2}\":\"{$fieldValue2}\"}}]}")
+              $this->equalTo("{\"recipients\":[{\"phonenumber\":\"{$recipient}\",\"templatefields\":{\"{$fieldName}\":\"{$fieldValue}\",\"{$fieldName2}\":\"{$fieldValue2}\"}}]}")
             )
             ->will($this->returnValue(true));
 

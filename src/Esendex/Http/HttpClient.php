@@ -92,6 +92,13 @@ class HttpClient implements IHttp
         return $results['data'];
     }
 
+    public function postJson($url, IAuthentication $authentication, $data)
+    {
+        $results = $this->request($url, $authentication, 'POST', $data, "application/json");
+
+        return $results['data'];
+    }
+    
     public function delete($url, IAuthentication $authentication)
     {
         $results = $this->request($url, $authentication, 'DELETE');
@@ -99,7 +106,7 @@ class HttpClient implements IHttp
         return $results['statuscode'];
     }
 
-    private function request($url, $authentication, $method, $data = null)
+    private function request($url, $authentication, $method, $data = null, $contentType = "application/xml")
     {
         $httpHeaders = array("Authorization: {$authentication->getEncodedValue()}");
 
@@ -120,7 +127,7 @@ class HttpClient implements IHttp
             if (strlen($data) == 0) {
                 $httpHeaders[] = 'Content-Length: 0';
             }
-            $httpHeaders[] = 'Content-Type: application/xml; charset=utf-8';
+            $httpHeaders[] = "Content-Type: ${contentType}; charset=utf-8";
         }
         \curl_setopt($curlHandle, CURLOPT_HTTPHEADER, $httpHeaders);
 
