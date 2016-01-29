@@ -69,7 +69,7 @@ class SurveysService
           )
         ));
          
-        $uri = "https://api.surveys.esendex.com/v1.0/surveys/{$surveyId}/send";
+        $uri = "https://surveys.api.esendex.com/v1.0/surveys/{$surveyId}/send";
 
         $this->httpClient->postJson(
             $uri,

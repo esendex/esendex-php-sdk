@@ -76,7 +76,7 @@ class SurveysServiceTest extends \PHPUnit_Framework_TestCase
             ->method("postJson")
             ->with(
               $this->equalTo(
-                  "https://api.surveys.esendex.com/v1.0/surveys/{$surveyId}/send"
+                  "https://surveys.api.esendex.com/v1.0/surveys/{$surveyId}/send"
               ),
               $this->equalTo($this->authentication),
               $this->equalTo("{\"recipients\":[{\"phonenumber\":\"{$recipient}\",\"templatefields\":null}]}")
@@ -103,7 +103,7 @@ class SurveysServiceTest extends \PHPUnit_Framework_TestCase
             ->method("postJson")
             ->with(
               $this->equalTo(
-                  "https://api.surveys.esendex.com/v1.0/surveys/{$surveyId}/send"
+                  "https://surveys.api.esendex.com/v1.0/surveys/{$surveyId}/send"
               ),
               $this->equalTo($this->authentication),
               $this->equalTo("{\"recipients\":[{\"phonenumber\":\"{$recipient}\",\"templatefields\":{\"{$fieldName}\":\"{$fieldValue}\",\"{$fieldName2}\":\"{$fieldValue2}\"}}]}")
