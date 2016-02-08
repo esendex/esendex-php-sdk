@@ -37,6 +37,7 @@ namespace Esendex\Parser;
 use Esendex\Model\Message;
 use Esendex\Model\SentMessage;
 use Esendex\Model\InboxMessage;
+use Esendex\Model\FailureReason;
 
 class MessageHeaderXmlParser
 {
@@ -68,6 +69,16 @@ class MessageHeaderXmlParser
             $result->sentAt($this->parseDateTime($header->sentat));
             $result->deliveredAt($this->parseDateTime($header->deliveredat));
             $result->username($header->username);
+            
+            if ($header->failurereason != null) {
+                $failureReason = new FailureReason();
+                $failureReason->code((int) $header->failurereason->code);
+                $failureReason->description($header->failurereason->description);
+                $failureReason->permanentFailure($this->parseBool($header->failurereason->permanentfailure));
+                
+                $result->failureReason($failureReason);
+            }
+
         } else {
             $result->receivedAt($this->parseDateTime($header->receivedat));
             $readAt = $header->readat;
@@ -76,7 +87,7 @@ class MessageHeaderXmlParser
                 $result->readBy($header->readby);
             }
         }
-
+        
         return $result;
     }
 
@@ -87,5 +98,13 @@ class MessageHeaderXmlParser
             : $value;
 
         return \DateTime::createFromFormat(\DateTime::ISO8601, $value);
+    }
+    
+    private function parseBool($value) {
+       if ($value !== "false") {
+          return true;
+       } else {
+          return false;
+       }
     }
 }

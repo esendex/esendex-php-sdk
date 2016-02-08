@@ -40,6 +40,7 @@ class SentMessage extends ResultMessage
     private $sentAt;
     private $deliveredAt;
     private $username;
+    private $failureReason;
 
     /**
      * @param \DateTime $value
@@ -87,5 +88,17 @@ class SentMessage extends ResultMessage
             $this->username = (string)$value;
         }
         return $this->username;
+    }
+    
+    /**
+     * @param \Esendex\Model\FailureReason $value
+     * @return \Esendex\Model\FailureReason 
+     */
+    public function failureReason($value = null)
+    {
+        if ($value != null) {
+            $this->failureReason = $value;
+        }
+        return $this->failureReason;
     }
 }
