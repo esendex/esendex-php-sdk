@@ -86,7 +86,6 @@ class InboxService
         if (count($query) > 0) {
             $uri .= "?" . Http\UriBuilder::buildQuery($query);
         }
-
         $data = $this->httpClient->get(
             $uri,
             $this->authentication
@@ -114,6 +113,7 @@ class InboxService
     }
 
     /**
+     * Update the read status of an inbox message using it's messageId
      *
      * @param string $messageId
      * @param bool $read
