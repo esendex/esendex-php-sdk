@@ -2,7 +2,7 @@
 /**
  * Copyright (c) 2013, Esendex Ltd.
  * All rights reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
  *     * Redistributions of source code must retain the above copyright
@@ -13,7 +13,7 @@
  *     * Neither the name of Esendex nor the
  *       names of its contributors may be used to endorse or promote products
  *       derived from this software without specific prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
  * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -86,7 +86,7 @@ class InboxService
         if (count($query) > 0) {
             $uri .= "?" . Http\UriBuilder::buildQuery($query);
         }
-        
+
         $data = $this->httpClient->get(
             $uri,
             $this->authentication
@@ -111,5 +111,26 @@ class InboxService
         );
 
         return $this->httpClient->delete($uri, $this->authentication) == 200;
+    }
+
+    /**
+     *
+     * @param string $messageId
+     * @param bool $read
+     * @return bool
+     */
+    function updateReadStatus($messageId, $read = true)
+    {
+        $uri = Http\UriBuilder::serviceUri(
+            self::INBOX_SERVICE_VERSION,
+            self::INBOX_SERVICE,
+            array("messages", $messageId),
+            $this->httpClient->isSecure()
+        );
+
+        $query = array("action" => $read ? "read" : "unread");
+        $uri .= "?" . Http\UriBuilder::buildQuery($query);
+
+        return $this->httpClient->put($uri, $this->authentication, null) == 200;
     }
 }
