@@ -34,12 +34,14 @@
  */
 namespace Esendex;
 
+use Esendex\Model\OptOut;
+
 class OptOutsServiceTest extends \PHPUnit_Framework_TestCase
 {
     const OPTOUT_XML_RESPONSE = "<optout id=\"47a1144b-8a68-4608-9360-d4a52aaf90d2\">
                                     <accountreference>EX0012345</accountreference>
                                     <from>
-                                        <phonenumber>44712345678</phonenumber>
+                                        <phonenumber>44721345678</phonenumber>
                                     </from>
                                     <receivedat>10-10-2016T13:00:00.1234567Z</receivedat>
                                  </optout>";
@@ -82,7 +84,7 @@ class OptOutsServiceTest extends \PHPUnit_Framework_TestCase
      */
     function getById()
     {
-        $expectedOptOut = new Model\OptOut();
+        $expectedOptOut = new OptOut();
         $this->httpUtil
             ->expects($this->once())
             ->method("get")
@@ -109,7 +111,7 @@ class OptOutsServiceTest extends \PHPUnit_Framework_TestCase
     function add()
     {
         $expectedRequest = "<optout><accountreference>EX123456</accountreference><from><phonenumber>447712345678</phonenumber><from><optout>";
-        $expectedOptOut = new Model\OptOut();
+        $expectedOptOut = new OptOut();
         $mobileNumber = "447712345678";
         $this->parser->expects($this->any())
             ->method("encodePostRequest")
@@ -134,5 +136,32 @@ class OptOutsServiceTest extends \PHPUnit_Framework_TestCase
         $result = $this->service->add($this->reference, $mobileNumber);
         
         $this->assertSame($expectedOptOut, $result);
+    }
+    
+    /**
+     * @test
+     */
+    function get()
+    {
+        $expectedOptOuts = array();
+        $expectedOptOuts[] = new OptOut();
+        $this->httpUtil
+            ->expects($this->once())
+            ->method("get")
+            ->with(
+            $this->equalTo(
+                "https://api.esendex.com/v1.0/optouts?startIndex=0"
+            ),
+            $this->equalTo($this->authentication)
+        )
+            ->will($this->returnValue(true));
+            
+        $this->parser->expects($this->any())
+            ->method("parse")
+            ->will($this->returnValue($expectedOptOuts));
+
+        $result = $this->service->get();
+        
+        $this->assertSame($expectedOptOuts, $result);
     }
 }

@@ -78,13 +78,22 @@ class OptOutXmlParser
             
         return $doc->asXML();
     }
+    
+    public function parseMultipleResult($xml)
+    {
+        $response = simplexml_load_string($xml);
+        $result = array();
+        foreach($response->optout as $optOut)
+        {
+            $parsedOptOut = $this->parseOptOut($optOut);
+            $result[] = $parsedOptOut; 
+        }
+        
+        return $result;        
+    }
 
     private function parseDateTime($value)
     {
-        $value = (strlen($value) > 20)
-            ? substr($value, 0, 19) . "Z"
-            : $value;
-
         return \DateTime::createFromFormat(\DateTime::ISO8601, $value);
     }
 }

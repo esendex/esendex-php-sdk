@@ -85,7 +85,7 @@ class OptOut
      */
     public function accountReference($value = null){
         if($value != null) {
-            $this->accountReference = $value;
+            $this->accountReference = (string)$value;
         }
         return $this->accountReference;
     }

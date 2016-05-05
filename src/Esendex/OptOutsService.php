@@ -93,4 +93,26 @@ class OptOutsService
         
         return $this->parser->parsePostResponse($xmlResult);
     }
+    
+    public function get($pageNumber = null, $pageSize = null)
+    {
+        if($pageNumber == null)
+        {
+            $pageNumber = 1;
+        }
+        if($pageSize == null)
+        {
+            $pageSize = 15;
+        } 
+          
+        $startIndex = ($pageNumber-1)*$pageSize;
+        $uri = "https://api.esendex.com/v1.0/optouts?startIndex={$startIndex}";
+        
+        $xmlResult = $this->httpClient->get(
+                         $uri,
+                         $this->authentication
+                     );
+        
+        return $this->parser->parseMultipleResult($xmlResult);
+    }
 }

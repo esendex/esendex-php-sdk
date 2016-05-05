@@ -43,7 +43,7 @@ class OptOutXmlParserTest extends \PHPUnit_Framework_TestCase
                                     <from>
                                         <phonenumber>44712345678</phonenumber>
                                     </from>
-                                    <receivedat>10-10-2016T13:00:00.1234567Z</receivedat>
+                                    <receivedat>2016-10-10T13:00:00.123Z</receivedat>
                                  </optout>";
                                  
     const EXPECTED_POST_ENCODE_RESULT = "<?xml version=\"1.0\" encoding=\"utf-8\"?>
@@ -53,6 +53,24 @@ class OptOutXmlParserTest extends \PHPUnit_Framework_TestCase
                                    <phonenumber>44712345678</phonenumber>
                                 </from>
                              </optout>";
+    
+    const OPTOUTS_RESPONSE_XML = "<?xml version=\"1.0\" encoding=\"utf-8\"?>
+                                  <optouts startindex=\"0\" count=\"2\" totalcount=\"6\" xmlns=\"http://api.esendex.com/ns/\">
+                                     <optout id=\"47a1144b-8a68-4608-9360-d4a52aaf90d2\">
+                                        <accountreference>EX0012345</accountreference>
+                                        <receivedat>2015-11-09T15:18:19.0333333Z</receivedat>
+                                        <from>
+                                           <phonenumber>447728693893</phonenumber>
+                                        </from>
+                                     </optout>
+                                     <optout id=\"47a1144b-8a68-4608-9360-d4a52aaf90d2\">
+                                        <accountreference>EX0012346</accountreference>
+                                        <receivedat>2015-11-10T15:00:19.0333333Z</receivedat>
+                                        <from>
+                                           <phonenumber>44712345678</phonenumber>
+                                        </from>
+                                     </optout>
+                                  </optouts>";
 
     /**
      * @test
@@ -82,7 +100,7 @@ class OptOutXmlParserTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals("EX0012345", $result->accountReference());
         $this->assertEquals("44712345678", $result->from()->phoneNumber());
         $this->assertEquals(
-            \DateTime::createFromFormat(\DateTime::ISO8601, "10-10-2016T13:00:00.1234567Z"),
+            \DateTime::createFromFormat(\DateTime::ISO8601, "2016-10-10T13:00:00.1234567Z"),
             $result->receivedAt()
         );
     }
@@ -104,8 +122,28 @@ class OptOutXmlParserTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals("EX0012345", $result->accountReference());
         $this->assertEquals("44712345678", $result->from()->phoneNumber());
         $this->assertEquals(
-            \DateTime::createFromFormat(\DateTime::ISO8601, "10-10-2016T13:00:00.1234567Z"),
+            \DateTime::createFromFormat(\DateTime::ISO8601, "2016-10-10T13:00:00.1234567Z"),
             $result->receivedAt()
+        );
+    }
+    
+    /**
+     * @test
+     */
+    function parseMultipleResult()
+    {
+        $parser = new OptOutXmlParser();
+        
+        $result = $parser->parseMultipleResult(self::OPTOUTS_RESPONSE_XML);
+        
+        $this->assertEquals("47a1144b-8a68-4608-9360-d4a52aaf90d2", $result[0]->id());
+        $this->assertEquals("EX0012345", $result[0]->accountReference());
+        $this->assertEquals("447728693893", $result[0]->from()->phoneNumber());
+        $expectedDate = \DateTime::createFromFormat(\DateTime::ISO8601, "2016-10-10T13:00:00.1234567Z");
+        echo "THIS IS WHAT I EXPECT: ".$expectedDate;
+        $this->assertEquals(
+            $expectedDate,
+            $result[0]->receivedAt()
         );
     }
 }
