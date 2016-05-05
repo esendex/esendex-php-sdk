@@ -157,7 +157,7 @@ class OptOutsServiceTest extends \PHPUnit_Framework_TestCase
             ->will($this->returnValue(true));
             
         $this->parser->expects($this->any())
-            ->method("parse")
+            ->method("parseMultipleResult")
             ->will($this->returnValue($expectedOptOuts));
 
         $result = $this->service->get();
