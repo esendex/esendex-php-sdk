@@ -70,7 +70,7 @@ class OptOutsServiceTest extends \PHPUnit_Framework_TestCase
         $this->httpUtil = $this->getMock("\\Esendex\\Http\\IHttp");
         $this->httpUtil->expects($this->any())
             ->method("isSecure")
-            ->will($this->returnValue(""));
+            ->will($this->returnValue(true));
         
         $this->parser = $this->getMockBuilder("\\Esendex\\Parser\\OptOutXmlParser")
             ->disableOriginalConstructor()

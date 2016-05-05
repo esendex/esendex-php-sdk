@@ -39,6 +39,9 @@ class OptOutsService
     private $authentication;
     private $httpClient;
     private $parser;
+    
+    const SERVICE = "optouts";
+    const SERVICE_VERSION = "v1.0";
 
     /**
      * @param Authentication\IAuthentication $authentication
@@ -65,8 +68,13 @@ class OptOutsService
      */
     public function getById($optOutId)
     {
-        $uri = "https://api.esendex.com/v1.0/optouts/{$optOutId}";
-
+        $uri = Http\UriBuilder::serviceUri(
+            self::SERVICE_VERSION,
+            self::SERVICE,
+            array($optOutId),
+            $this->httpClient->isSecure()
+        );
+        
         $xmlResult = $this->httpClient->get(
                          $uri,
                          $this->authentication
@@ -76,12 +84,18 @@ class OptOutsService
     }
 
     /**
-     * @param string $optOutId
+     * @param string $accountReference
+     * @param string $mobileNumber
      * @return Model\OptOut
      */
     public function add($accountReference, $mobileNumber)
     {
-        $uri = "https://api.esendex.com/v1.0/optouts";
+        $uri = Http\UriBuilder::serviceUri(
+            self::SERVICE_VERSION,
+            self::SERVICE,
+            null,
+            $this->httpClient->isSecure()
+        );
         
         $xmlRequest = $this->parser->encodePostRequest($accountReference, $mobileNumber);
         
@@ -94,6 +108,11 @@ class OptOutsService
         return $this->parser->parsePostResponse($xmlResult);
     }
     
+    /**
+     * @param string $pageNumber
+     * @param string $pageSize
+     * @return array
+     */
     public function get($pageNumber = null, $pageSize = null)
     {
         if($pageNumber == null)
@@ -106,7 +125,17 @@ class OptOutsService
         } 
           
         $startIndex = ($pageNumber-1)*$pageSize;
-        $uri = "https://api.esendex.com/v1.0/optouts?startIndex={$startIndex}";
+        
+        $uri = Http\UriBuilder::serviceUri(
+            self::SERVICE_VERSION,
+            self::SERVICE,
+            null,
+            $this->httpClient->isSecure()
+        );
+        
+        $query = array();
+        $query["startIndex"] = $startIndex;
+        $uri .= "?" . Http\UriBuilder::buildQuery($query);
         
         $xmlResult = $this->httpClient->get(
                          $uri,
