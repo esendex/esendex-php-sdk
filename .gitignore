@@ -5,4 +5,3 @@
 package.xml
 *.tgz
 composer.phar
-/.vscode/
