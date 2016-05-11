@@ -63,6 +63,14 @@ class OptOutsPage
     /**
      * @return int
      */
+    public function count()
+    {
+        return count($this->optOuts);
+    }
+    
+    /**
+     * @return int
+     */
     public function totalCount()
     {
         return $this->totalCount;

@@ -138,10 +138,11 @@ class OptOutXmlParserTest extends \PHPUnit_Framework_TestCase
         
         $this->assertEquals(6, $result->totalCount());
         $this->assertEquals(0, $result->startIndex());
+        $this->assertEquals(2, $result->count());
         
         $optOuts = $result->optOuts();
         
-        $this->assertEquals("47a1144b-8a68-4608-9360-d4a52aaf90d2", $optOuts[0]->id());
+        $this->assertEquals("47a1144b-8a68-4608-9360-d4a52aaf90d2", $optOuts[0]->id());        
         $this->assertEquals("EX0012345", $optOuts[0]->accountReference());
         $this->assertEquals("447728693893", $optOuts[0]->from()->phoneNumber());
         $expectedDate = \DateTime::createFromFormat(\DateTime::ISO8601, "2016-10-10T13:00:00.1234567Z");
