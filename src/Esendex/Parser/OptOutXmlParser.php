@@ -36,6 +36,7 @@ namespace Esendex\Parser;
 
 use Esendex\Model\OptOut;
 use Esendex\Model\Api;
+use Esendex\Model\OptOutsPage;
 
 class OptOutXmlParser
 {
@@ -82,12 +83,14 @@ class OptOutXmlParser
     public function parseMultipleResult($xml)
     {
         $response = simplexml_load_string($xml);
-        $result = array();
+        $optOuts = array();
         foreach($response->optout as $optOut)
         {
             $parsedOptOut = $this->parseOptOut($optOut);
-            $result[] = $parsedOptOut; 
+            $optOuts[] = $parsedOptOut; 
         }
+        
+        $result = new OptOutsPage($response["startindex"], $response["totalcount"], $optOuts);
         
         return $result;        
     }

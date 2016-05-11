@@ -136,14 +136,14 @@ class OptOutXmlParserTest extends \PHPUnit_Framework_TestCase
         
         $result = $parser->parseMultipleResult(self::OPTOUTS_RESPONSE_XML);
         
-        $this->assertEquals("47a1144b-8a68-4608-9360-d4a52aaf90d2", $result[0]->id());
-        $this->assertEquals("EX0012345", $result[0]->accountReference());
-        $this->assertEquals("447728693893", $result[0]->from()->phoneNumber());
+        $this->assertEquals(6, $result->totalCount());
+        $this->assertEquals(0, $result->startIndex());
+        
+        $this->assertEquals("47a1144b-8a68-4608-9360-d4a52aaf90d2", $result->optOuts()[0]->id());
+        $this->assertEquals("EX0012345", $result->optOuts()[0]->accountReference());
+        $this->assertEquals("447728693893", $result->optOuts()[0]->from()->phoneNumber());
         $expectedDate = \DateTime::createFromFormat(\DateTime::ISO8601, "2016-10-10T13:00:00.1234567Z");
-        echo "THIS IS WHAT I EXPECT: ".$expectedDate;
-        $this->assertEquals(
-            $expectedDate,
-            $result[0]->receivedAt()
+        $this->assertEquals($expectedDate, $result->optOuts()[0]->receivedAt()
         );
     }
 }
