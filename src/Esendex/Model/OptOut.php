@@ -34,21 +34,59 @@
  */
 namespace Esendex\Model;
 
-class Api
+class OptOut
 {
-    const NS = "http://api.esendex.com/ns/";
+    private $id;
+    private $accountReference;
+    private $from;
+    private $receivedAt;
 
-    private static $major = 1;
-    private static $minor = 1;
-    private static $patch = 0;
-
-    public static function getVersion()
+    /**
+     * @param string $value
+     * @return string
+     */
+    public function id($value = null)
     {
-        return sprintf("%d.%d.%d", self::$major, self::$minor, self::$patch);
+        if ($value != null) {
+            $this->id = (string)$value;
+        }
+        return $this->id;
     }
 
-    public static function getApiVersion()
+    /**
+     * @param string $value
+     * @return string
+     */
+
+	public function receivedAt($value = null)
     {
-        return sprintf("%d.%d.0", self::$major, self::$minor);
+        if ($value instanceof \DateTime) {
+            $this->receivedAt = $value;
+        }
+        return $this->receivedAt;
+    }
+	
+    /**
+     * @param string $value
+     * @return fromAddress
+     */
+    public function from($value = null)
+    {
+        if ($value != null) {
+            $this->from = new FromAddress();
+            $this->from->phoneNumber((string)$value->phonenumber);
+        }
+        return $this->from;
+    }
+    
+    /**
+     * @param string $value
+     * @return string
+     */
+    public function accountReference($value = null){
+        if($value != null) {
+            $this->accountReference = (string)$value;
+        }
+        return $this->accountReference;
     }
 }

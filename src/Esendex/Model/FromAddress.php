@@ -34,21 +34,19 @@
  */
 namespace Esendex\Model;
 
-class Api
+class FromAddress
 {
-    const NS = "http://api.esendex.com/ns/";
+    private $phoneNumber;
 
-    private static $major = 1;
-    private static $minor = 1;
-    private static $patch = 0;
-
-    public static function getVersion()
+    /**
+     * @param string $value
+     * @return string
+     */
+    public function phoneNumber($value = null)
     {
-        return sprintf("%d.%d.%d", self::$major, self::$minor, self::$patch);
-    }
-
-    public static function getApiVersion()
-    {
-        return sprintf("%d.%d.0", self::$major, self::$minor);
+        if ($value != null) {
+            $this->phoneNumber = (string)$value;
+        }
+        return $this->phoneNumber;
     }
 }
