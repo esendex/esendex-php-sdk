@@ -135,6 +135,7 @@ class OptOutsService
         
         $query = array();
         $query["startIndex"] = $startIndex;
+        $query["count"] = $pageSize;
         $uri .= "?" . Http\UriBuilder::buildQuery($query);
         
         $xmlResult = $this->httpClient->get(
