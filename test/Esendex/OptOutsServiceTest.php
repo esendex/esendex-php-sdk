@@ -150,7 +150,7 @@ class OptOutsServiceTest extends \PHPUnit_Framework_TestCase
             ->method("get")
             ->with(
             $this->equalTo(
-                "https://api.esendex.com/v1.0/optouts?startIndex=0"
+                "https://api.esendex.com/v1.0/optouts?startIndex=0&count=20"
             ),
             $this->equalTo($this->authentication)
         )
@@ -160,7 +160,7 @@ class OptOutsServiceTest extends \PHPUnit_Framework_TestCase
             ->method("parseMultipleResult")
             ->will($this->returnValue($expectedOptOuts));
 
-        $result = $this->service->get();
+        $result = $this->service->get(1, 20);
         
         $this->assertSame($expectedOptOuts, $result);
     }
