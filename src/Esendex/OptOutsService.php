@@ -109,40 +109,104 @@ class OptOutsService
     }
     
     /**
-     * @param string $pageNumber
-     * @param string $pageSize
+     * @param int $pageNumber
+     * @param int $pageSize
      * @return array
      */
     public function get($pageNumber = null, $pageSize = null)
     {
+        if($pageSize == null && $pageNumber == null)
+        {
+            return $this->getWithQuery();
+        }
+        
+        $query = array();
+        $query["startIndex"] = $this->calculateStartIndex($pageNumber, $pageSize);
+        
+        if($pageSize != null)
+        {
+            $query["count"] = $pageSize;
+        }
+        
+        return $this->getWithQuery($query);
+    }
+    
+    /**
+     * @param string $from
+     * @param int $pageNumber
+     * @param int $pageSize
+     * @return array
+     */
+    public function getWithFromAddress($from, $pageNumber = null, $pageSize = null)
+    {
+        $query = array();
+        $query["startIndex"] = $this->calculateStartIndex($pageNumber, $pageSize);
+        
+        if($pageSize != null)
+        {
+            $query["count"] = $pageSize;
+        }
+        $query["from"] = $from;
+        
+        return $this->getWithQuery($query);
+    }
+    
+    /**
+     * @param string $accountReference
+     * @param int $pageNumber
+     * @param int $pageSize
+     * @return array
+     */
+    public function getWithAccountReference($accountReference, $pageNumber = null, $pageSize = null)
+    {
+        $query = array();
+        $query["startIndex"] = $this->calculateStartIndex($pageNumber, $pageSize);
+        
+        if($pageSize != null)
+        {
+            $query["count"] = $pageSize;
+        }
+        $query["accountReference"] = $accountReference;
+        
+        return $this->getWithQuery($query);
+    }
+    
+    private function getWithQuery($params = null)
+    {
+         $uri = Http\UriBuilder::serviceUri(
+           self::SERVICE_VERSION,
+           self::SERVICE,
+           null,
+           $this->httpClient->isSecure()
+       );
+
+       if($params == null)
+       {
+           $params = array();
+           $params["startIndex"] = 0;
+       }
+       
+       $uri .= "?" . Http\UriBuilder::buildQuery($params);
+       
+       $xmlResult = $this->httpClient->get(
+                        $uri,
+                        $this->authentication
+                    );
+       
+       return $this->parser->parseMultipleResult($xmlResult);
+    }
+    
+    private function calculateStartIndex($pageNumber, $pageSize)
+    {
+        if($pageSize == null)
+        {
+            $pageSize = 15;    
+        }
         if($pageNumber == null)
         {
             $pageNumber = 1;
         }
-        if($pageSize == null)
-        {
-            $pageSize = 15;
-        } 
-          
-        $startIndex = ($pageNumber-1)*$pageSize;
         
-        $uri = Http\UriBuilder::serviceUri(
-            self::SERVICE_VERSION,
-            self::SERVICE,
-            null,
-            $this->httpClient->isSecure()
-        );
-        
-        $query = array();
-        $query["startIndex"] = $startIndex;
-        $query["count"] = $pageSize;
-        $uri .= "?" . Http\UriBuilder::buildQuery($query);
-        
-        $xmlResult = $this->httpClient->get(
-                         $uri,
-                         $this->authentication
-                     );
-        
-        return $this->parser->parseMultipleResult($xmlResult);
+        return ($pageNumber-1)*$pageSize;
     }
 }
