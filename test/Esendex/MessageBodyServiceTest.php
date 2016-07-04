@@ -45,6 +45,13 @@ class MessageBodyServiceTest extends \PHPUnit_Framework_TestCase
 </messagebody>
 XML;
 
+    const SMART_MESSAGEBODY_XML = <<<XML
+<?xml version="1.0" encoding="utf-8"?>
+<messagebody xmlns="http://api.esendex.com/ns/">
+    <bodytext>0000000000000001514616475841840000484845A164632269844</bodytext>
+</messagebody>
+XML;
+
     private $messageId;
     private $accountReference;
     private $username;
@@ -128,6 +135,24 @@ XML;
         $messageBody = $this->service->getMessageBody($bodyUri);
 
         $this->assertEquals("Merci", $messageBody);
+    }
+
+    /**
+     * @test
+     */
+    function getSmartMessageBodyWithMessageBodyUri()
+    {
+        $bodyUri = "https://api.esendex.com/v1.0/messageheaders/{$this->messageId}/body";
+        $this->httpUtil
+            ->expects($this->once())
+            ->method("get")
+            ->with($this->equalTo($bodyUri))
+            ->will($this->returnValue(self::SMART_MESSAGEBODY_XML));
+
+        $messageBody = $this->service->getMessageBody($bodyUri);
+
+        $this->assertEquals("0000000000000001514616475841840000484845A164632269844", $messageBody);
+        $this->assertEquals("None", $messageBody->characterSet());
     }
 
     /**

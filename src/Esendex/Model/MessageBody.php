@@ -41,6 +41,7 @@ class MessageBody
     const CharsetGSM = "GSM";
     const CharsetUnicode = "Unicode";
     const CharsetAuto = "Auto";
+    const CharsetNone = "";
     
     private $bodyText;
     private $characterSet;
@@ -66,6 +67,11 @@ class MessageBody
     {
         if ($value != null) {
             if ($value != self::CharsetGSM && $value != self::CharsetUnicode) {
+                if($value == self::CharsetNone) {
+                    $this->characterSet = "None";
+                    return;
+                }
+            
                 throw new ArgumentException(
                     "characterSet() value was '{$value}' and must be either '" . 
                     self::CharsetGSM . 
