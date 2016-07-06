@@ -14,7 +14,7 @@ The **esendex-php-sdk** is available to install through several methods as well 
 ```json
 {
     "require": {
-        "esendex/sdk": "1.0.*"
+        "esendex/sdk": "1.*.*"
     }
 }
 ```
@@ -27,7 +27,7 @@ For installation on other platforms see [getcomposer.org](https://getcomposer.or
 
 We're in the default [`Packagist`](http://packagist.org/packages/esendex/sdk) repository so just run
 ```bash
-$ php composer.phar require esendex/sdk:1.0.*
+$ php composer.phar require esendex/sdk:1.*.*
 ```
 or add the package above to your *composer.json*
 
