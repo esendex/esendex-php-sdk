@@ -60,12 +60,13 @@ class SurveysService
      * @return Model\ResultItem
      * @throws Exceptions\EsendexException
      */
-    public function send($surveyId, $phoneNumber, $templateFields = null)
+    public function send($surveyId, $phoneNumber, $templateFields = null, $metaData = null)
     {
         $data = array("recipients" => array(
           array(
             "phonenumber" => $phoneNumber,
-            "templatefields" => $templateFields
+            "templatefields" => $templateFields,
+            "metadata" => $metaData
           )
         ));
          

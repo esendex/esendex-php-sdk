@@ -79,7 +79,7 @@ class SurveysServiceTest extends \PHPUnit_Framework_TestCase
                   "https://surveys.api.esendex.com/v1.0/surveys/{$surveyId}/send"
               ),
               $this->equalTo($this->authentication),
-              $this->equalTo("{\"recipients\":[{\"phonenumber\":\"{$recipient}\",\"templatefields\":null}]}")
+              $this->equalTo("{\"recipients\":[{\"phonenumber\":\"{$recipient}\",\"templatefields\":null,\"metadata\":null}]}")
             )
             ->will($this->returnValue(true));
 
@@ -106,10 +106,35 @@ class SurveysServiceTest extends \PHPUnit_Framework_TestCase
                   "https://surveys.api.esendex.com/v1.0/surveys/{$surveyId}/send"
               ),
               $this->equalTo($this->authentication),
-              $this->equalTo("{\"recipients\":[{\"phonenumber\":\"{$recipient}\",\"templatefields\":{\"{$fieldName}\":\"{$fieldValue}\",\"{$fieldName2}\":\"{$fieldValue2}\"}}]}")
+              $this->equalTo("{\"recipients\":[{\"phonenumber\":\"{$recipient}\",\"templatefields\":{\"{$fieldName}\":\"{$fieldValue}\",\"{$fieldName2}\":\"{$fieldValue2}\"},\"metadata\":null}]}")
             )
             ->will($this->returnValue(true));
 
         $this->service->send($surveyId, $recipient, array($fieldName=>$fieldValue,$fieldName2=>$fieldValue2));
+    }
+
+    /**
+     * @test
+     */
+    function sendSurveyWithMetaData()
+    {
+        $surveyId = "586918CE-FC15-4204-9701-7DE5F975F9D6";
+        $recipient = "447712345678";
+        $metaDataKey = "metadata1key";
+        $metaDataValue = "metadata1value";
+        
+        $this->httpUtil
+            ->expects($this->once())
+            ->method("postJson")
+            ->with(
+              $this->equalTo(
+                  "https://surveys.api.esendex.com/v1.0/surveys/{$surveyId}/send"
+              ),
+              $this->equalTo($this->authentication),
+              $this->equalTo("{\"recipients\":[{\"phonenumber\":\"{$recipient}\",\"templatefields\":null,\"metadata\":{\"{$metaDataKey}\":\"{$metaDataValue}\"}}]}")
+            )
+            ->will($this->returnValue(true));
+
+        $this->service->send($surveyId, $recipient, null, array($metaDataKey=>$metaDataValue));
     }
 }
