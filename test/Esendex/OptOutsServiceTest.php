@@ -150,7 +150,7 @@ class OptOutsServiceTest extends \PHPUnit_Framework_TestCase
             ->method("get")
             ->with(
             $this->equalTo(
-                "https://api.esendex.com/v1.0/optouts?startIndex=0&count=20"
+                "https://api.esendex.com/v1.0/optouts?startIndex=0"
             ),
             $this->equalTo($this->authentication)
         )
@@ -160,8 +160,62 @@ class OptOutsServiceTest extends \PHPUnit_Framework_TestCase
             ->method("parseMultipleResult")
             ->will($this->returnValue($expectedOptOuts));
 
-        $result = $this->service->get(1, 20);
+        $result = $this->service->get();
         
+        $this->assertSame($expectedOptOuts, $result);
+    }
+    
+    /**
+     * @test
+     */
+    function getWithPhoneNumber()
+    {
+        $expectedOptOuts = array();
+        $expectedOptOuts[] = new OptOut();
+        $phoneNumber = "4412345678";
+        $this->httpUtil
+            ->expects($this->once())
+            ->method("get")
+            ->with(
+            $this->equalTo(
+                "https://api.esendex.com/v1.0/optouts?startIndex=0&from=4412345678"
+            ),
+            $this->equalTo($this->authentication)
+        )
+            ->will($this->returnValue(true));
+            
+        $this->parser->expects($this->any())
+            ->method("parseMultipleResult")
+            ->will($this->returnValue($expectedOptOuts));
+
+        $result = $this->service->getWithFromAddress($phoneNumber);
+        $this->assertSame($expectedOptOuts, $result);
+    }
+    
+    /**
+     * @test
+     */
+    function getWithAccountReference()
+    {
+        $expectedOptOuts = array();
+        $expectedOptOuts[] = new OptOut();
+        $accountReference = "EX0012345";
+        $this->httpUtil
+            ->expects($this->once())
+            ->method("get")
+            ->with(
+            $this->equalTo(
+                "https://api.esendex.com/v1.0/optouts?startIndex=0&accountReference=EX0012345"
+            ),
+            $this->equalTo($this->authentication)
+        )
+            ->will($this->returnValue(true));
+            
+        $this->parser->expects($this->any())
+            ->method("parseMultipleResult")
+            ->will($this->returnValue($expectedOptOuts));
+
+        $result = $this->service->getWithAccountReference($accountReference);
         $this->assertSame($expectedOptOuts, $result);
     }
 }
