@@ -66,12 +66,14 @@ class DispatchService
 
     /**
      * @param Model\DispatchMessage $message
+     * @param \DateTime $sendAt A date and time for which to schedule the message to send
      * @return Model\ResultItem
      * @throws Exceptions\EsendexException
      */
-    public function send(Model\DispatchMessage $message)
+    public function send(Model\DispatchMessage $message, \DateTime $sendAt = null)
     {
-        $xml = $this->parser->encode($message);
+        $xml = $this->parser->encode($message, $sendAt);
+
         $uri = Http\UriBuilder::serviceUri(
             self::DISPATCH_SERVICE_VERSION,
             self::DISPATCH_SERVICE,

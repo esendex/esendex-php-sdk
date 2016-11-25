@@ -2,7 +2,7 @@
 /**
  * Copyright (c) 2013, Esendex Ltd.
  * All rights reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
  *     * Redistributions of source code must retain the above copyright
@@ -13,7 +13,7 @@
  *     * Neither the name of Esendex nor the
  *       names of its contributors may be used to endorse or promote products
  *       derived from this software without specific prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
  * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -48,50 +48,68 @@ class DispatchXmlParser
         $this->reference = $accountReference;
     }
 
-    public function encode(\Esendex\Model\DispatchMessage $message)
+    /**
+     *
+     * @param \Esendex\Model\DispatchMessage $message
+     * @param \DateTime $sendAt A date and time for which to schedule the message
+     * @return string XML content
+     * @throws ArgumentException
+     */
+    public function encode(\Esendex\Model\DispatchMessage $message, \DateTime $sendAt = null)
     {
         if ($message->originator() != null) {
             if (ctype_digit($message->originator())) {
-                if (strlen($message->originator()) > 20)
+                if (strlen($message->originator()) > 20) {
                     throw new ArgumentException("Numeric originator must be <= 20 digits");
+                }
             } else {
-                if (strlen($message->originator()) > 11)
+                if (strlen($message->originator()) > 11) {
                     throw new ArgumentException("Alphanumeric originator must <= 11 characters");
-                if (!preg_match("/^[a-zA-Z0-9\*\$\?\!\"\#\%\&_\-\,\.\s@'\+]{1,11}$/",
-                                $message->originator()))
+                }
+                if (!preg_match("/^[a-zA-Z0-9\*\$\?\!\"\#\%\&_\-\,\.\s@'\+]{1,11}$/", $message->originator())) {
                     throw new ArgumentException("Alphanumeric originator contains invalid character(s)");
+                }
             }
         }
-        if (strlen($message->recipient()) < 1)
+        if (strlen($message->recipient()) < 1) {
             throw new ArgumentException("Recipient is invalid");
-        if ($message->validityPeriod() > 72)
+        }
+        if ($message->validityPeriod() > 72) {
             throw new ArgumentException("Validity too long, must be less or equal to than 72");
+        }
 
         $doc = new \SimpleXMLElement("<?xml version=\"1.0\" encoding=\"utf-8\"?><messages />", 0, false, Api::NS);
         $doc->addAttribute("xmlns", Api::NS);
         $doc->accountreference = $this->reference;
-        if ($message->characterSet() != null)
+        if ($sendAt != null) {
+            $doc->sendat = $sendAt->format('c');
+        }
+        if ($message->characterSet() != null) {
             $doc->characterset = $message->characterSet();
+        }
 
         $child = $doc->addChild("message");
-        if ($message->originator() != null)
+        if ($message->originator() != null) {
             $child->from = $message->originator();
-        $child->to = $message->recipient();
+        }
+        $child->to   = $message->recipient();
         $child->body = $message->body();
-		    $child->type = $message->type();
-        if ($message->validityPeriod() > 0)
+        $child->type = $message->type();
+        if ($message->validityPeriod() > 0) {
             $child->validity = $message->validityPeriod();
-        if ($message->language() != null)
+        }
+        if ($message->language() != null) {
             $child->lang = $message->language();
-
+        }
         return $doc->asXML();
     }
 
     public function parse($xml)
     {
         $headers = simplexml_load_string($xml);
-        if ($headers->getName() != "messageheaders")
+        if ($headers->getName() != "messageheaders"){
             throw new XmlException("Xml is missing <messageheaders /> root element");
+        }
 
         $results = array();
         foreach ($headers->messageheader as $header)
@@ -101,4 +119,5 @@ class DispatchXmlParser
 
         return $results;
     }
+
 }
