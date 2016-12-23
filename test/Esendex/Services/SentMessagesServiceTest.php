@@ -179,16 +179,14 @@ class SentMessagesServiceTest extends \PHPUnit_Framework_TestCase
             $this->equalTo($this->authentication)
         )
             ->will($this->returnValue($response));
+
         $this->parser
             ->expects($this->once())
             ->method("parse")
             ->with($this->equalTo($response))
             ->will($this->returnValue($sentMessagesPage));
 
-        $options = array(
-            'start' => $start,
-            'finish' => $finish
-            );
+        $options = array('start' => $start, 'finish' => $finish);
         $result = $this->service->loadMessages($options);
 
         $this->assertSame($sentMessagesPage, $result);
