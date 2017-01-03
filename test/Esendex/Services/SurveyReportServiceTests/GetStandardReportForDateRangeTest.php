@@ -101,7 +101,9 @@ class GetStandardReportForDateRangeTest extends \PHPUnit_Framework_TestCase
     function getStandardReport()
     {
         $result = $this->service->getStandardReport($this->surveyId, $this->startDate, $this->endDate, DateRangeType::AnswerReceived);
-        $actualReportRow = $result->rows()[0];
+
+        $rows = $result->rows();
+        $actualReportRow = $rows[0];
 
         $this->assertEquals($this->expectedRecipient, $actualReportRow->recipient());
         $this->assertEquals($this->expectedStatus, $actualReportRow->status());
