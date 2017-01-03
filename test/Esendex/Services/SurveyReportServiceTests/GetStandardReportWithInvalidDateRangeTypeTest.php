@@ -36,16 +36,6 @@ namespace Esendex;
 
 class GetStandardReportWithInvalidDateRangeTypeTest extends \PHPUnit_Framework_TestCase
 {
-    private $expectedRecipient = "447538414622";
-    private $expectedStatus = "Delivered";
-    private $expectedQuestionLabel = "1";
-    private $expectedQuestionDateTime = "2016-12-05T11:07:00.000";
-    private $expectedAnswerLabel = "Positive";
-    private $expectedAnswerDateTime = "2016-12-05T11:08:00.000";
-    private $expectedAnswerText = "Yes";
-    private $expectedRecipientDataKey = "FirstName";
-    private $expectedRecipientDataValue = "Ben";
-
     private $startDate;
     private $endDate;
 
@@ -56,24 +46,6 @@ class GetStandardReportWithInvalidDateRangeTypeTest extends \PHPUnit_Framework_T
 
     function setUp()
     {
-        $response = "<rows>
-                        <row>
-                            <recipient>{$this->expectedRecipient}</recipient>
-                            <status>{$this->expectedStatus}</status>
-                            <questionlabel>{$this->expectedQuestionLabel}</questionlabel>
-                            <questiondatetime>{$this->expectedQuestionDateTime}</questiondatetime>
-                            <answerlabel>{$this->expectedAnswerLabel}</answerlabel>
-                            <answerdatetime>{$this->expectedAnswerDateTime}</answerdatetime>
-                            <answertext>{$this->expectedAnswerText}</answertext>
-                            <recipientdata>
-                                <recipientdataitem>
-                                    <key>{$this->expectedRecipientDataKey}</key>
-                                    <value>{$this->expectedRecipientDataValue}</value>
-                                </recipientdataitem>
-                            </recipientdata>
-                        </row>
-                    </rows>";
-
         $this->startDate = new \DateTime("2016-12-01T00:00:00");
         $this->endDate = new \DateTime("2016-12-02T00:00:00");
 
@@ -81,15 +53,6 @@ class GetStandardReportWithInvalidDateRangeTypeTest extends \PHPUnit_Framework_T
         $this->surveyId = "e6ea4f5e-4d41-4b1e-8912-6c3131978a77";
 
         $this->httpUtil = $this->getMock("\\Esendex\\Http\\IHttp");
-        $this->httpUtil
-            ->expects($this->never())
-            ->method("get")
-            ->with(
-                $this->equalTo($this->isType("string")),
-                $this->equalTo($this->authentication)
-            )
-            ->will($this->returnValue($response));
-
         $this->service = new SurveyReportService($this->authentication, $this->httpUtil);
     }
 

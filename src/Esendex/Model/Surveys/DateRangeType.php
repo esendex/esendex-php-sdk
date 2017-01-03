@@ -34,7 +34,7 @@
  */
 namespace Esendex\Model\Surveys;
 
-abstract class DateRangeType
+class DateRangeType
 {
     const QuestionSent = 0;
     const AnswerReceived = 1;
