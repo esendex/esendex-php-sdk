@@ -113,7 +113,8 @@ class GetStandardReportForDateRangeTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($this->expectedAnswerDateTime, $actualReportRow->answerDateTime()->format('Y-m-d\TH:i:s.000'));
         $this->assertEquals($this->expectedAnswerText, $actualReportRow->answerText());
 
-        $this->assertEquals(1, count($actualReportRow->recipientData()));
-        $this->assertEquals($this->expectedRecipientDataValue, $actualReportRow->recipientData()[$this->expectedRecipientDataKey]);
+        $recipientData = $actualReportRow->recipientData();
+        $this->assertEquals(1, count($recipientData));
+        $this->assertEquals($this->expectedRecipientDataValue, $recipientData[$this->expectedRecipientDataKey]);
     }
 }

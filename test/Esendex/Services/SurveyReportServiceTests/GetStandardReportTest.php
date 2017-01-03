@@ -93,7 +93,9 @@ class GetStandardReportTest extends \PHPUnit_Framework_TestCase
     function getStandardReport()
     {
         $result = $this->service->getStandardReport($this->surveyId);
-        $actualReportRow = $result->rows()[0];
+
+        $rows = $result->rows();
+        $actualReportRow = $rows[0];
 
         $this->assertEquals($this->expectedRecipient, $actualReportRow->recipient());
         $this->assertEquals($this->expectedStatus, $actualReportRow->status());
@@ -103,7 +105,8 @@ class GetStandardReportTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($this->expectedAnswerDateTime, $actualReportRow->answerDateTime()->format('Y-m-d\TH:i:s.000'));
         $this->assertEquals($this->expectedAnswerText, $actualReportRow->answerText());
 
-        $this->assertEquals(1, count($actualReportRow->recipientData()));
-        $this->assertEquals($this->expectedRecipientDataValue, $actualReportRow->recipientData()[$this->expectedRecipientDataKey]);
+        $recipientData = $actualReportRow->recipientData();
+        $this->assertEquals(1, count($recipientData));
+        $this->assertEquals($this->expectedRecipientDataValue, $recipientData[$this->expectedRecipientDataKey]);
     }
 }
