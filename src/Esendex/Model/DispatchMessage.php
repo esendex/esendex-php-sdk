@@ -71,7 +71,7 @@ class DispatchMessage extends Message
         $this->validityperiod($validityPeriod);
         $this->language($language);
         $this->characterSet($characterSet);
-        $this->retries($retries)
+        $this->retries($retries);
     }
 
     /**
