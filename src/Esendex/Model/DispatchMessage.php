@@ -44,6 +44,7 @@ class DispatchMessage extends Message
     private $body;
     private $language;
     private $characterSet;
+    private $retries;
 
     /**
      * @param string $originator
