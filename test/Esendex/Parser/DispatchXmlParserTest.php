@@ -97,7 +97,9 @@ XML;
             "Something to say",
             Message::VoiceType,
             36,
-            "fr-FR"
+            "fr-FR",
+            null,
+            3
         );
         $parser = new DispatchXmlParser($reference);
         $doc = new \SimpleXMLElement("<?xml version=\"1.0\" encoding=\"utf-8\"?><messages />", 0, false, Api::NS);
@@ -109,6 +111,7 @@ XML;
         $child->addChild("type", Message::VoiceType);
         $child->addChild("validity", $message->validityPeriod());
         $child->addChild("lang", $message->language());
+        $child->addChild("retries", $message->retries());
         $expected = $doc->asXML();
 
         $result = $parser->encode($message);

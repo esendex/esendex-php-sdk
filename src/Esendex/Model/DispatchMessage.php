@@ -44,6 +44,7 @@ class DispatchMessage extends Message
     private $body;
     private $language;
     private $characterSet;
+    private $retries;
 
     /**
      * @param string $originator
@@ -52,6 +53,7 @@ class DispatchMessage extends Message
      * @param string $type
      * @param int $validityPeriod
      * @param string $language
+     * @param int $retries
      */
     public function __construct(
         $originator,
@@ -60,7 +62,8 @@ class DispatchMessage extends Message
         $type,
         $validityPeriod = 0,
         $language = self::ENGLISH_LANGUAGE,
-        $characterSet = null
+        $characterSet = null,
+        $retries = null
     ) {
         $this->originator($originator);
         $this->recipient($recipient);
@@ -69,6 +72,7 @@ class DispatchMessage extends Message
         $this->validityperiod($validityPeriod);
         $this->language($language);
         $this->characterSet($characterSet);
+        $this->retries($retries);
     }
 
     /**
@@ -108,6 +112,21 @@ class DispatchMessage extends Message
             $this->language = (string)$value;
         }
         return $this->language;
+    }
+
+     /**
+     * If the type of message is Voice then the number of times to retry
+     * the message if the recipient does not answer can be set.
+     *
+     * @param string $value
+     * @return string
+     */
+    public function retries($value = null)
+    {
+        if ($value != null) {
+            $this->retries = (int)$value;
+        }
+        return $this->retries;
     }
 
     /**

@@ -83,6 +83,8 @@ class DispatchXmlParser
             $child->validity = $message->validityPeriod();
         if ($message->language() != null)
             $child->lang = $message->language();
+        if ($message->retries() != null)
+            $child->retries = $message->retries();
 
         return $doc->asXML();
     }
