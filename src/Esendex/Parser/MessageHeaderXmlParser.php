@@ -64,6 +64,7 @@ class MessageHeaderXmlParser
         $result->bodyUri($header->body["uri"]);
         $result->summary($header->summary);
         $result->lastStatusAt($this->parseDateTime($header->laststatusat));
+        $result->batchId($header->batch["id"]);
         if ($direction == Message::Outbound) {
             $result->submittedAt($this->parseDateTime($header->submittedat));
             $result->sentAt($this->parseDateTime($header->sentat));
