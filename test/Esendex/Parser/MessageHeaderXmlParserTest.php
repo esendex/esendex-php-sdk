@@ -40,9 +40,10 @@ class MessageHeaderXmlParserTest extends \PHPUnit_Framework_TestCase
 {
     const OUTBOUND_RESPONSE_XML = <<<XML
 <?xml version="1.0" encoding="utf-8"?>
-<messageheader id="a22702be-881e-43d9-9790-7646a95335f6"
+<messageheader id="a22702be-881e-43d9-9790-7646a95335f6" 
                uri="https://api.esendex.com/v1.0/messageheaders/a22702be-881e-43d9-9790-7646a95335f6"
                xmlns="http://api.esendex.com/ns/">
+    <batch id="e84ccbdc-732f-1485-0b03-0aa56519e001" uri="https://api.esendex.com/v1.0/messagebatches/e84ccbdc-732f-1485-0b03-0aa56519e001" />
     <reference>EX123456</reference>
     <status>Delivered</status>
     <deliveredat>2013-03-06T13:20:00Z</deliveredat>
@@ -106,6 +107,8 @@ XML;
             $result->deliveredAt()
         );
         $this->assertEquals("support@esendex.com", $result->username());
+
+        $this->assertEquals("e84ccbdc-732f-1485-0b03-0aa56519e001", $result->batchId());
     }
     
     const FAILED_OUTBOUND_RESPONSE_XML = <<<XML
@@ -119,6 +122,7 @@ XML;
     <sentat>2013-03-06T13:19:20.177Z</sentat>
     <laststatusat>2013-03-06T13:20:00Z</laststatusat>
     <submittedat>2013-03-06T13:18:25.437Z</submittedat>
+    <batch id="e84ccbdc-732f-1485-0b03-0aa56519e001" uri="https://api.esendex.com/v1.0/messagebatches/e84ccbdc-732f-1485-0b03-0aa56519e001" />    
     <type>SMS</type>
     <to>
         <phonenumber>447123456789</phonenumber>
@@ -184,6 +188,7 @@ XML;
         $this->assertEquals(142, $result->failureReason()->code());
         $this->assertEquals("Message broken", $result->failureReason()->description());
         $this->assertEquals(true, $result->failureReason()->permanentFailure());
+        $this->assertEquals("e84ccbdc-732f-1485-0b03-0aa56519e001", $result->batchId());        
     }
 
     const INBOX_RESPONSE_XML = <<<XML
@@ -197,6 +202,7 @@ XML;
     <laststatusat>2013-03-06T14:30:42.407Z</laststatusat>
     <submittedat>2013-03-06T14:30:42.407Z</submittedat>
     <receivedat>2013-03-06T14:30:42.407Z</receivedat>
+    <batch id="e84ccbdc-732f-1485-0b03-0aa56519e001" uri="https://api.esendex.com/v1.0/messagebatches/e84ccbdc-732f-1485-0b03-0aa56519e001" />        
     <type>SMS</type>
     <to>
         <phonenumber>447123456789</phonenumber>
@@ -248,6 +254,7 @@ XML;
         );
         $this->assertNull($result->readAt());
         $this->assertNull($result->readBy());
+        $this->assertEquals("e84ccbdc-732f-1485-0b03-0aa56519e001", $result->batchId());                
     }
 
     /**

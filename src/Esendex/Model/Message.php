@@ -48,6 +48,7 @@ abstract class Message
     private $recipient;
     private $status;
     private $type;
+    private $batchId;
 
     /**
      * @param string $value
@@ -103,5 +104,17 @@ abstract class Message
             $this->type = (string)$value;
         }
         return $this->type;
+    }
+
+    /**
+     * @param string $value
+     * @return string
+     */
+    public function batchId($value = null)
+    {
+        if ($value != null) {        
+            $this->batchId = (string)$value;
+        }
+        return $this->batchId;
     }
 }
