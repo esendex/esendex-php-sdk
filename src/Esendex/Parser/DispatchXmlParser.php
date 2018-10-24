@@ -50,6 +50,38 @@ class DispatchXmlParser
 
     public function encode(\Esendex\Model\DispatchMessage $message)
     {
+        $doc = new \SimpleXMLElement("<?xml version=\"1.0\" encoding=\"utf-8\"?><messages />", 0, false, Api::NS);
+        $doc->addAttribute("xmlns", Api::NS);
+        $doc->accountreference = $this->reference;
+        if ($message->characterSet() != null)
+            $doc->characterset = $message->characterSet();
+
+        $this->addMessage($doc, $message);
+
+        return $doc->asXML();
+    }
+
+    public function encodeMultiple(array $messages)
+    {
+        if (count($messages) < 1) {
+            throw new ArgumentException("No message found");
+        }
+
+        $doc = new \SimpleXMLElement("<?xml version=\"1.0\" encoding=\"utf-8\"?><messages />", 0, false, Api::NS);
+        $doc->addAttribute("xmlns", Api::NS);
+        $doc->accountreference = $this->reference;
+        if ($messages[0]->characterSet() != null)
+            $doc->characterset = $messages[0]->characterSet();
+
+        foreach ($messages as $message) {
+            $this->addMessage($doc, $message);
+        }
+
+        return $doc->asXML();
+    }
+
+    public function addMessage(\SimpleXMLElement $doc, \Esendex\Model\DispatchMessage $message)
+    {
         if ($message->originator() != null) {
             if (ctype_digit($message->originator())) {
                 if (strlen($message->originator()) > 20)
@@ -67,12 +99,6 @@ class DispatchXmlParser
         if ($message->validityPeriod() > 72)
             throw new ArgumentException("Validity too long, must be less or equal to than 72");
 
-        $doc = new \SimpleXMLElement("<?xml version=\"1.0\" encoding=\"utf-8\"?><messages />", 0, false, Api::NS);
-        $doc->addAttribute("xmlns", Api::NS);
-        $doc->accountreference = $this->reference;
-        if ($message->characterSet() != null)
-            $doc->characterset = $message->characterSet();
-
         $child = $doc->addChild("message");
         if ($message->originator() != null)
             $child->from = $message->originator();
@@ -86,7 +112,6 @@ class DispatchXmlParser
         if ($message->retries() != null)
             $child->retries = $message->retries();
 
-        return $doc->asXML();
     }
 
     public function parse($xml)
