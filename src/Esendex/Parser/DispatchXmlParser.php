@@ -121,9 +121,11 @@ class DispatchXmlParser
             throw new XmlException("Xml is missing <messageheaders /> root element");
 
         $results = array();
+        $batchid = $headers['batchid'];
+
         foreach ($headers->messageheader as $header)
         {
-            $results[] = new ResultItem($header["id"], $header["uri"]);
+            $results[] = new ResultItem($header["id"], $header["uri"], $batchid);
         }
 
         return $results;
