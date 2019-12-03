@@ -2,7 +2,7 @@
 /**
  * Copyright (c) 2019, Commify Ltd.
  * All rights reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
  *     * Redistributions of source code must retain the above copyright
@@ -13,7 +13,7 @@
  *     * Neither the name of Commify nor the
  *       names of its contributors may be used to endorse or promote products
  *       derived from this software without specific prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
  * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -32,6 +32,7 @@
  * @license    http://opensource.org/licenses/BSD-3-Clause  BSD 3-Clause
  * @link       https://github.com/esendex/esendex-php-sdk
  */
+
 namespace Esendex\Parser;
 
 use Esendex\Model\OptOut;
@@ -53,16 +54,16 @@ class OptOutXmlParser
         $result->from($optOut->from);
         $result->accountReference($optOut->accountreference);
         $result->receivedAt($this->parseDateTime($optOut->receivedat));
-        
+
         return $result;
     }
-    
+
     public function parsePostResponse($xml)
     {
         $response = simplexml_load_string($xml);
         return $this->parseOptOut($response->optout);
     }
-    
+
     public function encodePostRequest($accountReference, $phoneNumber)
     {
         if (strlen($phoneNumber) < 1)
@@ -76,27 +77,28 @@ class OptOutXmlParser
 
         $child = $doc->addChild("from");
         $child->phonenumber = $phoneNumber;
-            
+
         return $doc->asXML();
     }
-    
+
     public function parseMultipleResult($xml)
     {
         $response = simplexml_load_string($xml);
         $optOuts = array();
-        foreach($response->optout as $optOut)
-        {
+        foreach ($response->optout as $optOut) {
             $parsedOptOut = $this->parseOptOut($optOut);
-            $optOuts[] = $parsedOptOut; 
+            $optOuts[] = $parsedOptOut;
         }
-        
+
         $result = new OptOutsPage($response["startindex"], $response["totalcount"], $optOuts);
-        
-        return $result;        
+
+        return $result;
     }
 
     private function parseDateTime($value)
     {
-        return \DateTime::createFromFormat(\DateTime::ISO8601, $value);
+        $array = (array) $value;
+        $date = $array[0];
+        return new \DateTime($date);
     }
 }
