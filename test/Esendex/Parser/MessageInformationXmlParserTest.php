@@ -38,7 +38,7 @@ use Esendex\Model\Api;
 use Esendex\Model\MessageBody;
 use Esendex\Model\MessageInformation;
 
-class MessageInformationXmlParserTest extends \PHPUnit_Framework_TestCase
+class MessageInformationXmlParserTest extends  \PHPUnit\Framework\TestCase
 {
     function characterSets()
     {
@@ -76,7 +76,7 @@ class MessageInformationXmlParserTest extends \PHPUnit_Framework_TestCase
     {
         $parser = new MessageInformationXmlParser();
 
-        $this->setExpectedException(
+        $this->expectException(
             "\\Esendex\\Exceptions\\ArgumentException",
             "characterSet value was 'Latin1' and must be one of 'GSM', " .
             "'Unicode' or 'Auto'"

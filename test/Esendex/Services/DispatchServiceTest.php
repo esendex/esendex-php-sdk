@@ -34,7 +34,7 @@
  */
 namespace Esendex;
 
-class DispatchServiceTest extends \PHPUnit_Framework_TestCase
+class DispatchServiceTest extends  \PHPUnit\Framework\TestCase
 {
     private $reference;
     private $username;
@@ -45,7 +45,7 @@ class DispatchServiceTest extends \PHPUnit_Framework_TestCase
 
     public $parser;
 
-    function setUp()
+    function setUp() : void
     {
         $this->reference = "EX123456";
         $this->username = "jhdkfjh";
@@ -56,14 +56,14 @@ class DispatchServiceTest extends \PHPUnit_Framework_TestCase
             $this->password
         );
 
-        $this->httpUtil = $this->getMock("\\Esendex\\Http\\IHttp");
+        $this->httpUtil = $this->getMockForAbstractClass("\\Esendex\\Http\\IHttp");
         $this->httpUtil->expects($this->any())
             ->method("isSecure")
             ->will($this->returnValue(true));
 
         $this->parser = $this->getMockBuilder("\\Esendex\\Parser\\DispatchXmlParser")
             ->disableOriginalConstructor()
-            ->getMock();
+            ->getMockForAbstractClass();
 
         $this->service = new DispatchService($this->authentication, $this->httpUtil, $this->parser);
     }
@@ -119,7 +119,7 @@ class DispatchServiceTest extends \PHPUnit_Framework_TestCase
             ->method("parse")
             ->will($this->returnValue(array()));
 
-        $this->setExpectedException(
+        $this->expectException(
             "\\Esendex\\Exceptions\\EsendexException",
             "Error parsing the dispatch result",
             null

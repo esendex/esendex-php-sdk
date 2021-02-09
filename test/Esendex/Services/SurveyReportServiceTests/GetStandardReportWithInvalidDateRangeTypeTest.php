@@ -34,7 +34,7 @@
  */
 namespace Esendex;
 
-class GetStandardReportWithInvalidDateRangeTypeTest extends \PHPUnit_Framework_TestCase
+class GetStandardReportWithInvalidDateRangeTypeTest extends  \PHPUnit\Framework\TestCase
 {
     private $startDate;
     private $endDate;
@@ -44,7 +44,7 @@ class GetStandardReportWithInvalidDateRangeTypeTest extends \PHPUnit_Framework_T
     private $httpUtil;
     private $surveyId;
 
-    function setUp()
+    function setUp() : void
     {
         $this->startDate = new \DateTime("2016-12-01T00:00:00");
         $this->endDate = new \DateTime("2016-12-02T00:00:00");
@@ -52,7 +52,7 @@ class GetStandardReportWithInvalidDateRangeTypeTest extends \PHPUnit_Framework_T
         $this->authentication = new Authentication\LoginAuthentication("SV0000001", "someone@esendex.com", "hunter2");
         $this->surveyId = "e6ea4f5e-4d41-4b1e-8912-6c3131978a77";
 
-        $this->httpUtil = $this->getMock("\\Esendex\\Http\\IHttp");
+        $this->httpUtil = $this->getMockForAbstractClass("\\Esendex\\Http\\IHttp");
         $this->service = new SurveyReportService($this->authentication, $this->httpUtil);
     }
 

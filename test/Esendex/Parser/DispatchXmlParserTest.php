@@ -38,7 +38,7 @@ use Esendex\Model\Message;
 use Esendex\Model\MessageBody;
 use Esendex\Model\DispatchMessage;
 
-class DispatchXmlParserTest extends \PHPUnit_Framework_TestCase
+class DispatchXmlParserTest extends \PHPUnit\Framework\TestCase
 {
     const DISPATCHER_RESPONSE_XML = <<<XML
 <?xml version="1.0" encoding="utf-8"?>
@@ -181,7 +181,7 @@ XML;
         );
         $parser = new DispatchXmlParser($reference);
 
-        $this->setExpectedException("\\Esendex\\Exceptions\\ArgumentException", $expectedMessage);
+        $this->expectException("\\Esendex\\Exceptions\\ArgumentException", $expectedMessage);
         $parser->encode($message);
     }
 
@@ -199,7 +199,7 @@ XML;
         );
         $parser = new DispatchXmlParser($reference);
 
-        $this->setExpectedException("\\Esendex\\Exceptions\\ArgumentException", "Recipient is invalid");
+        $this->expectException("\\Esendex\\Exceptions\\ArgumentException", "Recipient is invalid");
         $parser->encode($message);
     }
 
@@ -218,7 +218,7 @@ XML;
         );
         $parser = new DispatchXmlParser($reference);
 
-        $this->setExpectedException(
+        $this->expectException(
             "\\Esendex\\Exceptions\\ArgumentException",
             "Validity too long, must be less or equal to than 72"
         );
@@ -283,7 +283,7 @@ XML;
     {
         $parser = new DispatchXmlParser("reference");
 
-        $this->setExpectedException("\\Esendex\\Exceptions\\XmlException");
+        $this->expectException("\\Esendex\\Exceptions\\XmlException");
         $parser->parse("<?xml version=\"1.0\" encoding=\"utf-8\"?><wrong />");
     }
 }

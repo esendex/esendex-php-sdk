@@ -36,7 +36,7 @@ namespace Esendex\Parser;
 
 use Esendex\Model\Account;
 
-class AccountXmlParserTest extends \PHPUnit_Framework_TestCase
+class AccountXmlParserTest extends \PHPUnit\Framework\TestCase
 {
     const RESPONSE_XML = <<<XML
 <?xml version="1.0" encoding="utf-8"?>

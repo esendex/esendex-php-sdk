@@ -37,7 +37,7 @@ namespace Esendex;
 use Esendex\Model\MessageBody;
 use Esendex\Model\MessageInformation;
 
-class MessageInformationServiceTest extends \PHPUnit_Framework_TestCase
+class MessageInformationServiceTest extends  \PHPUnit\Framework\TestCase
 {
     private $reference;
     private $username;
@@ -47,7 +47,7 @@ class MessageInformationServiceTest extends \PHPUnit_Framework_TestCase
     private $parser;
     private $service;
 
-    function setUp()
+    function setUp() : void
     {
         $this->reference = "EX123456";
         $this->username = "jhdkfjh";
@@ -58,14 +58,14 @@ class MessageInformationServiceTest extends \PHPUnit_Framework_TestCase
             $this->password
         );
 
-        $this->httpUtil = $this->getMock("\\Esendex\\Http\\IHttp");
+        $this->httpUtil = $this->getMockForAbstractClass("\\Esendex\\Http\\IHttp");
         $this->httpUtil->expects($this->any())
             ->method("isSecure")
             ->will($this->returnValue(true));
 
         $this->parser = $this->getMockBuilder("\\Esendex\\Parser\\MessageInformationXmlParser")
             ->disableOriginalConstructor()
-            ->getMock();
+            ->getMockForAbstractClass();
 
         $this->service = new MessageInformationService(
             $this->authentication,
@@ -176,7 +176,7 @@ class MessageInformationServiceTest extends \PHPUnit_Framework_TestCase
             ->method("parse")
             ->will($this->returnValue($response));
 
-        $this->setExpectedException(
+        $this->expectException(
             "\\Esendex\\Exceptions\\EsendexException",
             "Error parsing the result",
             null
