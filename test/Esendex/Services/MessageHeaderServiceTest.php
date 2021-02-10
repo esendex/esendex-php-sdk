@@ -64,6 +64,7 @@ class MessageHeaderServiceTest extends  \PHPUnit\Framework\TestCase
 
         $this->parser = $this->getMockBuilder("\\Esendex\\Parser\\MessageHeaderXmlParser")
             ->disableOriginalConstructor()
+            ->onlyMethods(['parse'])
             ->getMockForAbstractClass();
 
         $this->service = new MessageHeaderService($this->authentication, $this->httpUtil, $this->parser);

@@ -58,8 +58,9 @@ class AccountServiceTest extends  \PHPUnit\Framework\TestCase
 
         $this->parser = $this->getMockBuilder("\\Esendex\\Parser\\AccountXmlParser")
             ->disableOriginalConstructor()
+            ->onlyMethods(['parse'])
             ->getMockForAbstractClass();
-
+        
         $this->service = new AccountService($this->authentication, $this->httpUtil, $this->parser);
     }
 

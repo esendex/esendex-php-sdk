@@ -63,6 +63,7 @@ class DispatchServiceTest extends  \PHPUnit\Framework\TestCase
 
         $this->parser = $this->getMockBuilder("\\Esendex\\Parser\\DispatchXmlParser")
             ->disableOriginalConstructor()
+            ->onlyMethods(['parse', 'encode'])
             ->getMockForAbstractClass();
 
         $this->service = new DispatchService($this->authentication, $this->httpUtil, $this->parser);

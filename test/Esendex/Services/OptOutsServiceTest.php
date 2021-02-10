@@ -74,6 +74,7 @@ class OptOutsServiceTest extends  \PHPUnit\Framework\TestCase
         
         $this->parser = $this->getMockBuilder("\\Esendex\\Parser\\OptOutXmlParser")
             ->disableOriginalConstructor()
+            ->onlyMethods(['parse', 'encodePostRequest', 'parseMultipleResult', 'parsePostResponse'])
             ->getMockForAbstractClass();
 
         $this->service = new OptOutsService($this->authentication, $this->httpUtil, $this->parser);

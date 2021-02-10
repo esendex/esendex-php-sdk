@@ -65,6 +65,7 @@ class MessageInformationServiceTest extends  \PHPUnit\Framework\TestCase
 
         $this->parser = $this->getMockBuilder("\\Esendex\\Parser\\MessageInformationXmlParser")
             ->disableOriginalConstructor()
+            ->onlyMethods(['encode', 'parse'])
             ->getMockForAbstractClass();
 
         $this->service = new MessageInformationService(

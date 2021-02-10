@@ -44,6 +44,7 @@ class InboxXmlParserTest extends \PHPUnit\Framework\TestCase
     {
         $this->headerParser = $this->getMockBuilder("\\Esendex\\Parser\\MessageHeaderXmlParser")
             ->disableOriginalConstructor()
+            ->onlyMethods(['parseHeader'])
             ->getMockForAbstractClass();
 
         $this->parser = new InboxXmlParser($this->headerParser);
