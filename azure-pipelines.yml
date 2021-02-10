@@ -24,7 +24,7 @@ steps:
 
 - script: composer install --no-interaction --prefer-dist
   displayName: 'composer install'
-- script: vendor/bin/phing -verbose package
+- script: vendor/bin/phing -verbose package -Dbuilddir=$(Build.ArtifactStagingDirectory) 
   displayName: 'phing package'
 
 - task: PublishBuildArtifacts@1
