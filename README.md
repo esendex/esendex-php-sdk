@@ -5,7 +5,7 @@ Esendex PHP Client
 ## Installation
 
 ### Requirements
- - PHP >= 5.3.0
+ - PHP >= 7.3
  - ext-curl enabled
 
 The **esendex-php-sdk** is available to install through several methods as well as from source.
@@ -14,7 +14,7 @@ The **esendex-php-sdk** is available to install through several methods as well 
 ```json
 {
     "require": {
-        "esendex/sdk": "2.*.*"
+        "esendex/sdk": "3.*.*"
     }
 }
 ```
@@ -27,7 +27,7 @@ For installation on other platforms see [getcomposer.org](https://getcomposer.or
 
 We're in the default [`Packagist`](http://packagist.org/packages/esendex/sdk) repository so just run
 ```bash
-$ php composer.phar require esendex/sdk:2.*.*
+$ php composer.phar require esendex/sdk:3.*.*
 ```
 or add the package above to your *composer.json*
 
