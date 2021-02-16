@@ -22,8 +22,8 @@ steps:
     php -version
   displayName: 'Use PHP version $(phpVersion)'
 
-- script: composer install --no-interaction --prefer-dist
-  displayName: 'composer install'
+- script: composer update --no-interaction --prefer-dist
+  displayName: 'composer update'
 - script: vendor/bin/phing -verbose  package
   displayName: 'phing package'
 
