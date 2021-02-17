@@ -5,7 +5,7 @@ Esendex PHP Client
 ## Installation
 
 ### Requirements
- - PHP >= 5.3.0
+ - PHP >= 7.3
  - ext-curl enabled
 
 The **esendex-php-sdk** is available to install through several methods as well as from source.
@@ -14,7 +14,7 @@ The **esendex-php-sdk** is available to install through several methods as well 
 ```json
 {
     "require": {
-        "esendex/sdk": "2.*.*"
+        "esendex/sdk": "3.*.*"
     }
 }
 ```
@@ -27,24 +27,13 @@ For installation on other platforms see [getcomposer.org](https://getcomposer.or
 
 We're in the default [`Packagist`](http://packagist.org/packages/esendex/sdk) repository so just run
 ```bash
-$ php composer.phar require esendex/sdk:2.*.*
+$ php composer.phar require esendex/sdk:3.*.*
 ```
 or add the package above to your *composer.json*
 
-Then just include the generated *autoload.php* somewhere in your code;
+Then just include Composer's generated *autoload.php* somewhere in your code;
 ```php5
 require_once 'path/to/vendor/autoload.php';
-```
-
-#### PEAR
-Our package requires version 1.9.3 or newer
-```bash
-$ pear config-set auto_discover 1
-$ pear install esendex.github.com/pear/Esendex
-```
-We provide a PSR-0 autoloader you can use for your convenience;
-```php5
-require_once 'Esendex/autoload.php';
 ```
 
 #### GZIP
@@ -52,7 +41,7 @@ Download the current version [here](http://downloads.esendex.com.s3-website-eu-w
 
 Our autoloader may be included somewhere in your application;
 ```php5
-require_once 'path/to/downloaded/Esendex/autoload.php';
+require_once 'path/to/downloaded/sdk/src/Esendex/AutoLoad.php';
 ```
 
 ## Getting Started

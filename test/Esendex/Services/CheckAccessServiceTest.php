@@ -34,7 +34,7 @@
  */
 namespace Esendex;
 
-class CheckAccessServiceTest extends \PHPUnit_Framework_TestCase
+class CheckAccessServiceTest extends  \PHPUnit\Framework\TestCase
 {
     const ACCOUNTS_RESPONSE_XML = <<<XML
 <?xml version="1.0" encoding="utf-8"?>
@@ -61,7 +61,7 @@ XML;
     private $httpUtil;
     private $service;
 
-    function setUp()
+    function setUp() : void
     {
         $this->reference = "EX123456";
         $this->username = "jhdkfjh";
@@ -72,7 +72,7 @@ XML;
             $this->password
         );
 
-        $this->httpUtil = $this->getMock("\\Esendex\\Http\\IHttp");
+        $this->httpUtil = $this->getMockForAbstractClass("\\Esendex\\Http\\IHttp");
         $this->httpUtil->expects($this->any())
             ->method("isSecure")
             ->will($this->returnValue(true));

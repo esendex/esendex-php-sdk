@@ -36,7 +36,7 @@ namespace Esendex;
 
 use Esendex\Model\Surveys\DateRangeType;
 
-class GetStandardReportForDateRangeTest extends \PHPUnit_Framework_TestCase
+class GetStandardReportForDateRangeTest extends  \PHPUnit\Framework\TestCase
 {
     private $expectedRecipient = "447538414622";
     private $expectedStatus = "Delivered";
@@ -56,7 +56,7 @@ class GetStandardReportForDateRangeTest extends \PHPUnit_Framework_TestCase
     private $httpUtil;
     private $surveyId;
 
-    function setUp()
+    function setUp() : void
     {
         $response = "<rows>
                         <row>
@@ -82,7 +82,7 @@ class GetStandardReportForDateRangeTest extends \PHPUnit_Framework_TestCase
         $this->authentication = new Authentication\LoginAuthentication("SV0000001", "someone@esendex.com", "hunter2");
         $this->surveyId = "e6ea4f5e-4d41-4b1e-8912-6c3131978a77";
 
-        $this->httpUtil = $this->getMock("\\Esendex\\Http\\IHttp");
+        $this->httpUtil = $this->getMockForAbstractClass("\\Esendex\\Http\\IHttp");
         $this->httpUtil
             ->expects($this->once())
             ->method("get")

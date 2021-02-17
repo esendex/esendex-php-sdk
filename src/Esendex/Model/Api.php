@@ -38,9 +38,9 @@ class Api
 {
     const NS = "http://api.esendex.com/ns/";
 
-    private static $major = 2;
-    private static $minor = 1;
-    private static $patch = 1;
+    private static $major = 3;
+    private static $minor = 0;
+    private static $patch = 0;
 
     public static function getVersion()
     {

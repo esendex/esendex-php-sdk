@@ -36,7 +36,7 @@ namespace Esendex\Parser;
 
 use Esendex\Model\Message;
 
-class MessageHeaderXmlParserTest extends \PHPUnit_Framework_TestCase
+class MessageHeaderXmlParserTest extends \PHPUnit\Framework\TestCase
 {
     const OUTBOUND_RESPONSE_XML = <<<XML
 <?xml version="1.0" encoding="utf-8"?>

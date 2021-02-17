@@ -34,7 +34,9 @@
  */
 namespace Esendex;
 
-class InboxServiceTest extends \PHPUnit_Framework_TestCase
+use Esendex\Parser\InboxXmlParser;
+
+class InboxServiceTest extends  \PHPUnit\Framework\TestCase
 {
     private $reference;
     private $username;
@@ -44,14 +46,14 @@ class InboxServiceTest extends \PHPUnit_Framework_TestCase
     private $parser;
     private $service;
 
-    function setUp()
+    function setUp() : void
     {
         $this->reference = "asjkdhlajksdhla";
         $this->username = "jhdkfjh";
         $this->password = "dklfjlsdjkf";
         $this->authentication = new Authentication\LoginAuthentication($this->reference, $this->username, $this->password);
 
-        $this->httpUtil = $this->getMock("\\Esendex\\Http\\IHttp");
+        $this->httpUtil = $this->getMockForAbstractClass("\\Esendex\\Http\\IHttp");
         $this->httpUtil->expects($this->any())
             ->method("isSecure")
             ->will($this->returnValue(true));

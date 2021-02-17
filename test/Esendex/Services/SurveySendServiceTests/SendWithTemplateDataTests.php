@@ -34,7 +34,7 @@
  */
 namespace Esendex;
 
-class SendWithTemplateDataTests extends \PHPUnit_Framework_TestCase
+class SendWithTemplateDataTests extends  \PHPUnit\Framework\TestCase
 {
     private $reference;
     private $username;
@@ -43,7 +43,7 @@ class SendWithTemplateDataTests extends \PHPUnit_Framework_TestCase
     private $httpUtil;
     private $service;
 
-    function setUp()
+    function setUp() : void
     {
         $this->reference = "EX123456";
         $this->username = "jhdkfjh";
@@ -54,7 +54,7 @@ class SendWithTemplateDataTests extends \PHPUnit_Framework_TestCase
             $this->password
         );
 
-        $this->httpUtil = $this->getMock("\\Esendex\\Http\\IHttp");
+        $this->httpUtil = $this->getMockForAbstractClass("\\Esendex\\Http\\IHttp");
         $this->httpUtil->expects($this->any())
             ->method("isSecure")
             ->will($this->returnValue(""));

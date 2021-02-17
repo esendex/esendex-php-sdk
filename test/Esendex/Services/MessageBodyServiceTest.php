@@ -35,7 +35,7 @@
 namespace Esendex;
 use Esendex\Model\MessageBody;
 
-class MessageBodyServiceTest extends \PHPUnit_Framework_TestCase
+class MessageBodyServiceTest extends  \PHPUnit\Framework\TestCase
 {
     const MESSAGEBODY_RESPONSE_XML = <<<XML
 <?xml version="1.0" encoding="utf-8"?>
@@ -60,7 +60,7 @@ XML;
     private $httpUtil;
     private $service;
 
-    function setUp()
+    function setUp() : void
     {
         $this->messageId = uniqid();
         $this->accountReference = "asjkdhlajksdhla";
@@ -68,7 +68,7 @@ XML;
         $this->password = "dklfjlsdjkf";
         $this->authentication = new Authentication\LoginAuthentication($this->accountReference, $this->username, $this->password);
 
-        $this->httpUtil = $this->getMock("\\Esendex\\Http\\IHttp");
+        $this->httpUtil = $this->getMockForAbstractClass("\\Esendex\\Http\\IHttp");
         $this->httpUtil->expects($this->any())
             ->method("isSecure")
             ->will($this->returnValue(true));
@@ -105,7 +105,7 @@ XML;
      */
     function getMessageBodyByIdWhenNullId()
     {
-        $this->setExpectedException("\\Esendex\\Exceptions\\ArgumentException", "messageId is null");
+        $this->expectException("\\Esendex\\Exceptions\\ArgumentException", "messageId is null");
 
         $this->service->getMessageBodyById(null);
     }
@@ -115,7 +115,7 @@ XML;
      */
     function getMessageBodyByIdWhenNotString()
     {
-        $this->setExpectedException("\\Esendex\\Exceptions\\ArgumentException", "messageId is not a string");
+        $this->expectException("\\Esendex\\Exceptions\\ArgumentException", "messageId is not a string");
 
         $this->service->getMessageBodyById(99);
     }
@@ -179,7 +179,7 @@ XML;
      */
     function getMessageBodyWhenInvalidInput()
     {
-        $this->setExpectedException(
+        $this->expectException(
             "\\Esendex\\Exceptions\\ArgumentException",
             "Should be either MessageBody Uri or ResultMessage"
         );

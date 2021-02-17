@@ -34,7 +34,7 @@
  */
 namespace Esendex\Http;
 
-class UriBuilderTest extends \PHPUnit_Framework_TestCase
+class UriBuilderTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @test

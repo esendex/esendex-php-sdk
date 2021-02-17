@@ -36,7 +36,7 @@ namespace Esendex;
 
 define('ESENDEX_HOME', dirname(__FILE__));
 
-class AutoLoader
+class AutoLoad
 {
     const SPLIT_DIR = DIRECTORY_SEPARATOR;
     const SPLIT_NS = '\\';
@@ -55,4 +55,4 @@ class AutoLoader
     }
 }
 
-\spl_autoload_register(array('\Esendex\AutoLoader', 'load'));
+\spl_autoload_register(array('\Esendex\AutoLoad', 'load'));

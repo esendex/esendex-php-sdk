@@ -34,16 +34,18 @@
  */
 namespace Esendex\Parser;
 
-class InboxXmlParserTest extends \PHPUnit_Framework_TestCase
+class InboxXmlParserTest extends \PHPUnit\Framework\TestCase
 {
     private $headerParser;
     private $parser;
 
-    function setUp()
+    
+    function setUp(): void
     {
         $this->headerParser = $this->getMockBuilder("\\Esendex\\Parser\\MessageHeaderXmlParser")
             ->disableOriginalConstructor()
-            ->getMock();
+            ->onlyMethods(['parseHeader'])
+            ->getMockForAbstractClass();
 
         $this->parser = new InboxXmlParser($this->headerParser);
     }

@@ -7,7 +7,7 @@ trigger:
 - master
 
 pool:
-  vmImage: ubuntu-default
+  vmImage: ubuntu-20.04
 
 variables:
   phpVersion: 7.4
@@ -23,6 +23,12 @@ steps:
   displayName: 'Use PHP version $(phpVersion)'
 
 - script: composer install --no-interaction --prefer-dist
-  displayName: 'composer install'
-- script: vendor/bin/phing -verbose package
+  displayName: 'composer update'
+- script: vendor/bin/phing -verbose  package
   displayName: 'phing package'
+
+- task: PublishBuildArtifacts@1
+  inputs:
+    PathtoPublish: '$(Build.SourcesDirectory)/build'
+    ArtifactName: 'drop'
+    publishLocation: 'Container'

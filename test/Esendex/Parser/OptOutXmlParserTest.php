@@ -36,7 +36,7 @@ namespace Esendex\Parser;
 
 use Esendex\Model\OptOut;
 
-class OptOutXmlParserTest extends \PHPUnit_Framework_TestCase
+class OptOutXmlParserTest extends \PHPUnit\Framework\TestCase
 {
     const OPTOUT_RESPONSE_XML = "<optout id=\"47a1144b-8a68-4608-9360-d4a52aaf90d2\">
                                     <accountreference>EX0012345</accountreference>

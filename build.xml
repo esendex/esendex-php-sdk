@@ -25,22 +25,6 @@
 
         <echo message="Creating packages..."/>
 
-        <exec executable="php" dir="./build" checkreturn="true">
-            <arg file="./pear_generator.php"/>
-            <arg line="make"/>
-        </exec>
-
-        <echo message="Building PEAR package"/>
-        <exec executable="pear" dir="./build" checkreturn="true">
-            <arg line="package"/>
-        </exec>
-        <move todir="./build/pear">
-            <fileset dir="./build">
-                <include name="package.xml"/>
-                <include name="*.tgz"/>
-            </fileset>
-        </move>
-
         <copy todir="./build/src">
             <fileset dir="./build/Esendex">
                 <include name="**"/>

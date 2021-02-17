@@ -34,7 +34,7 @@
  */
 namespace Esendex;
 
-class SessionServiceTest extends \PHPUnit_Framework_TestCase
+class SessionServiceTest extends  \PHPUnit\Framework\TestCase
 {
     private $httpUtil;
     private $service;
@@ -46,9 +46,9 @@ class SessionServiceTest extends \PHPUnit_Framework_TestCase
 </session>
 XML;
 
-    function setUp()
+    function setUp() : void
     {
-        $this->httpUtil = $this->getMock("\\Esendex\\Http\\IHttp");
+        $this->httpUtil = $this->getMockForAbstractClass("\\Esendex\\Http\\IHttp");
         $this->httpUtil->expects($this->any())
             ->method("isSecure")
             ->will($this->returnValue(true));

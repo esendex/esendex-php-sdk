@@ -34,7 +34,7 @@
  */
 namespace Esendex\Authentication;
 
-class SessionAuthenticationTest extends \PHPUnit_Framework_TestCase
+class SessionAuthenticationTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @test

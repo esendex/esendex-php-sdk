@@ -36,7 +36,7 @@ namespace Esendex;
 
 use Esendex\Model\OptOut;
 
-class OptOutsServiceTest extends \PHPUnit_Framework_TestCase
+class OptOutsServiceTest extends  \PHPUnit\Framework\TestCase
 {
     const OPTOUT_XML_RESPONSE = "<optout id=\"47a1144b-8a68-4608-9360-d4a52aaf90d2\">
                                     <accountreference>EX0012345</accountreference>
@@ -55,7 +55,7 @@ class OptOutsServiceTest extends \PHPUnit_Framework_TestCase
 
     public $parser;
 
-    function setUp()
+    function setUp() : void
     {
         $this->optOutId = "47a1144b-8a68-4608-9360-d4a52aaf90d2";
         $this->username = "jhdkfjh";
@@ -67,14 +67,15 @@ class OptOutsServiceTest extends \PHPUnit_Framework_TestCase
             $this->password
         );
 
-        $this->httpUtil = $this->getMock("\\Esendex\\Http\\IHttp");
+        $this->httpUtil = $this->getMockForAbstractClass("\\Esendex\\Http\\IHttp");
         $this->httpUtil->expects($this->any())
             ->method("isSecure")
             ->will($this->returnValue(true));
         
         $this->parser = $this->getMockBuilder("\\Esendex\\Parser\\OptOutXmlParser")
             ->disableOriginalConstructor()
-            ->getMock();
+            ->onlyMethods(['parse', 'encodePostRequest', 'parseMultipleResult', 'parsePostResponse'])
+            ->getMockForAbstractClass();
 
         $this->service = new OptOutsService($this->authentication, $this->httpUtil, $this->parser);
     }
