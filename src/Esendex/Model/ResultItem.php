@@ -38,15 +38,18 @@ class ResultItem
 {
     private $id;
     private $uri;
+    private $batchid;
 
     /**
      * @param $id
      * @param $uri
+     * @param $batchid
      */
-    public function __construct($id, $uri)
+    public function __construct($id, $uri, $batchid = '')
     {
         $this->id = (string)$id;
         $this->uri = (string)$uri;
+        $this->batchid = (string)$batchid;
     }
 
     /**
@@ -63,5 +66,13 @@ class ResultItem
     public function uri()
     {
         return $this->uri;
+    }
+
+    /**
+     * @return string
+     */
+    public function batchid()
+    {
+        return $this->batchid;
     }
 }
