@@ -50,9 +50,10 @@ class HttpClient implements IHttp
             $agent .= " curl/" . $curlVersion["version"];
         }
         self::$userAgent = $agent;
-        self::$certificateBundle = realpath(dirname(__FILE__) . '/../../ca-bundle.pem');
-        if (empty(self::$certificateBundle)) {
-            echo "WARN: Could not locate CA Bundle. Secure web requests will fail";
+
+        self::$certificateBundle = self::getCertificateBundlePath();
+        if (self::$certificateBundle === null && self::shouldUseCertificateBundle()) {
+            echo "WARN: Could not locate CA Bundle. Secure web requests may fail";
         }
     }
 
@@ -118,7 +119,9 @@ class HttpClient implements IHttp
         \curl_setopt($curlHandle, CURLOPT_RETURNTRANSFER, true);
         \curl_setopt($curlHandle, CURLOPT_TIMEOUT, 30);
         \curl_setopt($curlHandle, CURLOPT_HEADER, false);
-        \curl_setopt($curlHandle, CURLOPT_CAINFO, self::$certificateBundle);
+        if (self::$certificateBundle !== null) {
+            \curl_setopt($curlHandle, CURLOPT_CAINFO, self::$certificateBundle);
+        }
         \curl_setopt($curlHandle, CURLOPT_USERAGENT, self::$userAgent);
         \curl_setopt($curlHandle, CURLOPT_CUSTOMREQUEST, $method);
         if ($method == 'PUT' || $method == 'POST') {
@@ -133,6 +136,12 @@ class HttpClient implements IHttp
 
         $result = \curl_exec($curlHandle);
         $curlInfo = \curl_getinfo($curlHandle);
+
+        $errorNumber = \curl_errno($curlHandle);
+        if ($errorNumber !== 0) {
+            $errorMessage = \curl_strerror($errorNumber);
+            throw new \Exception("cURL Error {$errorNumber}: {$errorMessage}", $errorNumber);
+        }
 
         $results = array();
         $results['data'] = $result;
@@ -180,6 +189,33 @@ class HttpClient implements IHttp
                 $error_message = "An unexpected error occurred processing the web request";
                 return new \Exception($error_message, $http_code);
         }
+    }
+
+    /**
+     * @return bool
+     */
+    private static function shouldUseCertificateBundle()
+    {
+        // Check if we're running in a Phar
+        return !(\extension_loaded('Phar') && \Phar::running() !== '');
+    }
+
+    /**
+     * @return string|null
+     */
+    private static function getCertificateBundlePath()
+    {
+        if (!self::shouldUseCertificateBundle()) {
+            return null;
+        }
+
+        $path = \dirname(\dirname(__DIR__)) . '/ca-bundle.pem';
+
+        if (!\file_exists($path)) {
+            return null;
+        }
+
+        return $path;
     }
 }
 
