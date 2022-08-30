@@ -47,6 +47,7 @@ class AutoLoad
             return false;
         }
         $parts = explode(self::SPLIT_NS, $class);
+        unset($parts[0]);
         $path = ESENDEX_HOME . self::SPLIT_DIR . implode(self::SPLIT_DIR, $parts) . '.php';
 
         if (file_exists($path)) {
