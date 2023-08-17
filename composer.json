@@ -24,8 +24,8 @@
         "phing/phing": "2.*"
     },
     "autoload": {
-        "psr-0": {
-            "Esendex": "src/"
+        "psr-4": {
+            "Esendex\\": "src/"
         }
     }
 }
