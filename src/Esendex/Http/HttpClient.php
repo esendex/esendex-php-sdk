@@ -127,7 +127,7 @@ class HttpClient implements IHttp
             if (strlen($data) == 0) {
                 $httpHeaders[] = 'Content-Length: 0';
             }
-            $httpHeaders[] = "Content-Type: ${contentType}; charset=utf-8";
+            $httpHeaders[] = "Content-Type: ".$contentType."; charset=utf-8";
         }
         \curl_setopt($curlHandle, CURLOPT_HTTPHEADER, $httpHeaders);
 
