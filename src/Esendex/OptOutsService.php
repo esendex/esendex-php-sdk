@@ -145,4 +145,44 @@ class OptOutsService
         
         return $this->parser->parseMultipleResult($xmlResult);
     }
+
+    /**
+     * @param string $pageNumber
+     * @param string $pageSize
+     * @return array
+     */
+    public function getMyAccountReference($pageNumber = null, $pageSize = null)
+    {
+        if($pageNumber == null)
+        {
+            $pageNumber = 1;
+        }
+        if($pageSize == null)
+        {
+            $pageSize = 15;
+        }
+
+        $startIndex = ($pageNumber-1)*$pageSize;
+
+        $uri = Http\UriBuilder::serviceUri(
+            self::SERVICE_VERSION,
+            self::SERVICE,
+            null,
+            $this->httpClient->isSecure()
+        );
+
+        $query = array();
+        $query["startIndex"] = $startIndex;
+        $query["count"] = $pageSize;
+        $query["accountreference"] = $this->authentication->accountReference();
+        $uri .= "?" . Http\UriBuilder::buildQuery($query);
+
+        $xmlResult = $this->httpClient->get(
+            $uri,
+            $this->authentication
+        );
+
+        return $this->parser->parseMultipleResult($xmlResult);
+    }
+
 }
