@@ -83,6 +83,8 @@
 
     <adhoc-task name="load-version">
         <![CDATA[
+                use Phing\Task;
+
                 class LoadVersionTask extends Task
                 {
                     private $prefix = "version";
@@ -110,6 +112,8 @@
 
     <adhoc-task name="check-access">
         <![CDATA[
+                use Phing\Task;
+
                 class CheckAccessTask extends Task
                 {
                     private $username;

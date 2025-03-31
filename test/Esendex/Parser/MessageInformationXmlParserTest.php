@@ -40,7 +40,7 @@ use Esendex\Model\MessageInformation;
 
 class MessageInformationXmlParserTest extends  \PHPUnit\Framework\TestCase
 {
-    function characterSets()
+    static function characterSets()
     {
         return array(
             array(MessageBody::CharsetGSM),

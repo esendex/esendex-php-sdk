@@ -119,7 +119,7 @@ XML;
         $this->assertEquals($expected, $result);
     }
     
-    function characterSets()
+    static function characterSets()
     {
         return array(array(MessageBody::CharsetGSM),
                      array(MessageBody::CharsetUnicode),
@@ -159,7 +159,7 @@ XML;
         $this->assertEquals($expected, $result);
     }
     
-    function invalidOriginators()
+    static function invalidOriginators()
     {
         return array(array("TooLongForAlpha", "Alphanumeric originator must <= 11 characters"),
                      array("BadChars{}", "Alphanumeric originator contains invalid character(s)"),
