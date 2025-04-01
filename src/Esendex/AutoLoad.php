@@ -34,7 +34,7 @@
  */
 namespace Esendex;
 
-define('ESENDEX_HOME', dirname(__FILE__));
+define('ESENDEX_HOME', dirname(dirname(__FILE__)));
 
 class AutoLoad
 {
