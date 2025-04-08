@@ -22,12 +22,12 @@
         "source": "https://github.com/esendex/esendex-php-sdk"
     },
     "require": {
-        "php": ">=7.3",
+        "php": ">=8.3",
         "ext-curl": "*"
     },
     "require-dev": {
-        "phpunit/phpunit": "8.5.*",
-        "phing/phing": "2.*",
+        "phpunit/phpunit": "11.5.*",
+        "phing/phing": "3.*",
         "pear/archive_tar": "1.4.*"
     },
     "autoload": {

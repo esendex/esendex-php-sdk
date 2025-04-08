@@ -7,10 +7,10 @@ trigger:
 - master
 
 pool:
-  vmImage: ubuntu-20.04
+  vmImage: ubuntu-24.04
 
 variables:
-  phpVersion: 7.4
+  phpVersion: 8.3
 
 steps:
 - script: |

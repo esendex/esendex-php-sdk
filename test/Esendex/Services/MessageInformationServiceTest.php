@@ -155,7 +155,7 @@ class MessageInformationServiceTest extends  \PHPUnit\Framework\TestCase
         $this->assertSame($messageInformation, $result);
     }
 
-    function unexpectedResponses()
+    static function unexpectedResponses()
     {
         return array(
             array(array()),

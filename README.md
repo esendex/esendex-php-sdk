@@ -5,7 +5,7 @@ Esendex PHP Client
 ## Installation
 
 ### Requirements
- - PHP >= 7.3
+ - PHP >= 8.3
  - ext-curl enabled
 
 The **esendex-php-sdk** is available to install through several methods as well as from source.

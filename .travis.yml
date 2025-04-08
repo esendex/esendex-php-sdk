@@ -1,8 +1,7 @@
 language: php
 dist: trusty
 php:
-  - 7.4
-  - 7.3
+  - 8.3
 before_script:
   - echo 'date.timezone = "Europe/London"' >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
   - composer install

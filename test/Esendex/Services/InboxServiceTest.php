@@ -199,28 +199,19 @@ class InboxServiceTest extends  \PHPUnit\Framework\TestCase
     {
         $messageId = uniqid();
 
-        $readParameters = array(
-            $this->equalTo(
-                "https://api.esendex.com/v1.0/inbox/messages/{$messageId}?action=read"
-            ),
-            $this->equalTo($this->authentication)
-        );
-        $unreadParameters = array(
-            $this->equalTo(
-                "https://api.esendex.com/v1.0/inbox/messages/{$messageId}?action=unread"
-            ),
-            $this->equalTo($this->authentication)
-        );
+        $readUrl = "https://api.esendex.com/v1.0/inbox/messages/{$messageId}?action=read";
+        $unreadUrl = "https://api.esendex.com/v1.0/inbox/messages/{$messageId}?action=unread";
+        $expected = [$readUrl, $readUrl, $unreadUrl];
+
+        $callIndex = 0;
 
         $this->httpUtil
-            ->expects($this->exactly(3))
+            ->expects($this->exactly(count($expected)))
             ->method("put")
-            ->withConsecutive(
-                $readParameters,
-                $readParameters,
-                $unreadParameters
-            )
-            ->will($this->returnValue(200));
+            ->with($this->callback(function ($url) use (&$callIndex, $expected) {
+                return $url === $expected[$callIndex++];
+            }), $this->equalTo($this->authentication))
+            ->willReturn(200);
 
         $this->assertTrue($this->service->updateReadStatus($messageId));
         $this->assertTrue($this->service->updateReadStatus($messageId, true));
