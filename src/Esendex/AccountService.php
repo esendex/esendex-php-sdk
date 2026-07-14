@@ -50,8 +50,8 @@ class AccountService
      */
     public function __construct(
         Authentication\IAuthentication $authentication,
-        Http\IHttp $httpClient = null,
-        Parser\AccountXmlParser $parser = null
+        ?Http\IHttp $httpClient = null,
+        ?Parser\AccountXmlParser $parser = null
     ) {
         $this->authentication = $authentication;
         $this->httpClient = (isset($httpClient))

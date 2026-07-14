@@ -50,8 +50,8 @@ class MessageHeaderService
      */
     public function __construct(
         Authentication\IAuthentication $authentication,
-        Http\IHttp $httpClient = null,
-        Parser\MessageHeaderXmlParser $parser = null
+        ?Http\IHttp $httpClient = null,
+        ?Parser\MessageHeaderXmlParser $parser = null
     )
     {
         $this->authentication = $authentication;

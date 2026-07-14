@@ -44,7 +44,7 @@ class UriBuilder
         self::$url_separator = ini_get('arg_separator.output');
     }
 
-    public static function serviceUri($version, $resource, array $parts = null, $secure = true)
+    public static function serviceUri($version, $resource, ?array $parts = null, $secure = true)
     {
         $host = defined("ESENDEX_API_HOST") ? ESENDEX_API_HOST : self::HOST;
         $scheme = ($secure) ? "https" : "http";

@@ -37,6 +37,7 @@ namespace Esendex\Parser;
 use Esendex\Model\OptOut;
 use Esendex\Model\Api;
 use Esendex\Model\OptOutsPage;
+use Esendex\Exceptions\ArgumentException;
 
 class OptOutXmlParser
 {

@@ -75,7 +75,7 @@ class SentMessagesPage implements \ArrayAccess, \Countable, \Iterator
      * @return boolean true on success or false on failure.
      * </p>
      */
-    public function offsetExists($offset)
+    public function offsetExists($offset): bool
     {
         return isset($this->messages[$offset]);
     }
@@ -86,7 +86,7 @@ class SentMessagesPage implements \ArrayAccess, \Countable, \Iterator
      * </p>
      * @return SentMessage
      */
-    public function offsetGet($offset)
+    public function offsetGet($offset): mixed
     {
         return isset($this->messages[$offset])
             ? $this->messages[$offset]
@@ -102,7 +102,7 @@ class SentMessagesPage implements \ArrayAccess, \Countable, \Iterator
      * </p>
      * @return void
      */
-    public function offsetSet($offset, $value)
+    public function offsetSet($offset, $value): void
     {
         if (!is_null($offset)) {
             throw new \Esendex\Exceptions\ArgumentException("SentMessagesPage does not support explicitly set offsets");
@@ -117,7 +117,7 @@ class SentMessagesPage implements \ArrayAccess, \Countable, \Iterator
      * </p>
      * @return void
      */
-    public function offsetUnset($offset)
+    public function offsetUnset($offset): void
     {
         unset($this->messages[$offset]);
     }
@@ -125,7 +125,7 @@ class SentMessagesPage implements \ArrayAccess, \Countable, \Iterator
     /**
      * @return int
      */
-    public function count()
+    public function count(): int
     {
         return count($this->messages);
     }
@@ -133,7 +133,7 @@ class SentMessagesPage implements \ArrayAccess, \Countable, \Iterator
     /**
      * @return SentMessage
      */
-    public function current()
+    public function current(): mixed
     {
         return $this->offsetGet($this->position);
     }
@@ -141,7 +141,7 @@ class SentMessagesPage implements \ArrayAccess, \Countable, \Iterator
     /**
      * @return void
      */
-    public function next()
+    public function next(): void
     {
         ++$this->position;
     }
@@ -149,7 +149,7 @@ class SentMessagesPage implements \ArrayAccess, \Countable, \Iterator
     /**
      * @return int
      */
-    public function key()
+    public function key(): mixed
     {
         return $this->position;
     }
@@ -157,7 +157,7 @@ class SentMessagesPage implements \ArrayAccess, \Countable, \Iterator
     /**
      * @return boolean true on success or false on failure.
      */
-    public function valid()
+    public function valid(): bool
     {
         return $this->offsetExists($this->position);
     }
@@ -165,7 +165,7 @@ class SentMessagesPage implements \ArrayAccess, \Countable, \Iterator
     /**
      * @return void
      */
-    public function rewind()
+    public function rewind(): void
     {
         $this->position = 0;
     }

@@ -52,8 +52,8 @@ class DispatchService
      */
     public function __construct(
         Authentication\IAuthentication $authentication,
-        Http\IHttp $httpClient = null,
-        Parser\DispatchXmlParser $parser = null
+        ?Http\IHttp $httpClient = null,
+        ?Parser\DispatchXmlParser $parser = null
     ) {
         $this->authentication = $authentication;
         $this->httpClient = (isset($httpClient))

@@ -39,7 +39,9 @@ class SessionService
     const SERVICE = 'session';
     const SERVICE_VERSION = 'v1.0';
 
-    function __construct(Http\IHttp $httpClient = null)
+    private $httpUtil;
+
+    function __construct(?Http\IHttp $httpClient = null)
     {
         $this->httpUtil = (isset($httpClient))
             ? $httpClient
