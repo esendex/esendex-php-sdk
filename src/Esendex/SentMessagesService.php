@@ -50,8 +50,8 @@ class SentMessagesService
      */
     public function __construct(
         Authentication\IAuthentication $authentication,
-        Http\IHttp $httpClient = null,
-        Parser\SentMessagesXmlParser $parser = null
+        ?Http\IHttp $httpClient = null,
+        ?Parser\SentMessagesXmlParser $parser = null
     ) {
         $this->authentication = $authentication;
         $this->httpClient = (isset($httpClient))

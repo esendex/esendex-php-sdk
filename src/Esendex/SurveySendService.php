@@ -45,7 +45,7 @@ class SurveySendService
      */
     public function __construct(
         Authentication\IAuthentication $authentication,
-        Http\IHttp $httpClient = null
+        ?Http\IHttp $httpClient = null
     ) {
         $this->authentication = $authentication;
         $this->httpClient = (isset($httpClient))
@@ -58,7 +58,6 @@ class SurveySendService
      * @param string $phoneNumber
      * @param array $templateFields
      * @param array $metaData
-     * @return Model\ResultItem
      */
     public function send($surveyId, $phoneNumber, $templateFields = null, $metaData = null)
     {

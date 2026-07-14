@@ -40,6 +40,7 @@ class SurveyReportService
 {
     private $authentication;
     private $httpClient;
+    private $parser;
 
     /**
      * @param Authentication\IAuthentication $authentication
@@ -48,8 +49,8 @@ class SurveyReportService
      */
     public function __construct(
         Authentication\IAuthentication $authentication,
-        Http\IHttp $httpClient = null,
-        Parser\SurveyReportXmlParser $parser = null
+        ?Http\IHttp $httpClient = null,
+        ?Parser\SurveyReportXmlParser $parser = null
     ) {
         $this->authentication = $authentication;
         $this->httpClient = (isset($httpClient))

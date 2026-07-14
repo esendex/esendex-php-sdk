@@ -47,7 +47,7 @@ class MessageBodyService
      * @param Authentication\IAuthentication $authentication
      * @param Http\IHttp $httpClient
      */
-    function __construct(Authentication\IAuthentication $authentication, Http\IHttp $httpClient = null)
+    function __construct(Authentication\IAuthentication $authentication, ?Http\IHttp $httpClient = null)
     {
         $this->authentication = $authentication;
         $this->httpClient = (isset($httpClient))

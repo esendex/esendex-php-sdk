@@ -138,7 +138,9 @@ class HttpClient implements IHttp
         $results['data'] = $result;
         $results['statuscode'] = $curlInfo["http_code"];
 
-        \curl_close($curlHandle);
+        if (PHP_VERSION_ID < 80000) {
+            \curl_close($curlHandle);
+        }
 
         if ($results['statuscode'] < 200 || $results['statuscode'] >= 300) {
             throw $this->getHttpException($results, $curlInfo);
@@ -148,7 +150,7 @@ class HttpClient implements IHttp
         return $results;
     }
 
-    private function getHttpException(array $result, array $info = null)
+    private function getHttpException(array $result, ?array $info = null)
     {
         $http_code = $result["statuscode"];
         $data = $result["data"];

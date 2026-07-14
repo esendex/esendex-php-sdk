@@ -41,7 +41,7 @@ class CheckAccessService
 
     private $httpClient;
 
-    public function __construct(Http\IHttp $httpClient = null)
+    public function __construct(?Http\IHttp $httpClient = null)
     {
         $this->httpClient = (isset($httpClient))
             ? $httpClient
