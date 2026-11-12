@@ -71,3 +71,23 @@ class ServerErrorException extends HttpException {}
 class NotImplementedException extends HttpException {}
 
 class ServiceUnavailableException extends HttpException {}
+
+/**
+ * Thrown when no HTTP response was received, e.g. DNS, connection, timeout or
+ * TLS certificate verification failures. getCode() returns 0.
+ */
+class ConnectionException extends HttpException
+{
+    private $curlErrorNumber;
+
+    public function __construct($message = '', $code = 0, ?array $_info = null, $curlErrorNumber = 0)
+    {
+        parent::__construct($message, $code, $_info);
+        $this->curlErrorNumber = $curlErrorNumber;
+    }
+
+    public function getCurlErrorNumber()
+    {
+        return $this->curlErrorNumber;
+    }
+}
