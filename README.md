@@ -110,6 +110,16 @@ $result = $service->getMessageBodyById($messageId);
 print $result;
 ```
 
+#### TLS Certificates
+The SDK verifies the API's TLS certificate using your system's CA store (curl's default, or `curl.cainfo` / `openssl.cafile` in `php.ini`). If that's unavailable or can't verify the certificate, it falls back to the CA bundle shipped with the SDK (`src/ca-bundle.pem`).
+
+To use a specific CA bundle instead:
+```php5
+\Esendex\Http\HttpClient::setCertificateBundle("/path/to/ca-bundle.pem");
+```
+
+If the SDK can't reach the API (DNS, connection, timeout or certificate failure) it throws `\Esendex\Http\ConnectionException`, whose message includes the underlying curl error.
+
 ## Would you like to know more?
 Full REST API documentation can be found @ [developers.esendex.com](http://developers.esendex.com/)
 

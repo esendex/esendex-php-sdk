@@ -39,6 +39,7 @@ class HttpClient implements IHttp
 {
     private static $userAgent;
     private static $certificateBundle;
+    private static $customCertificateBundle;
 
     public static function init()
     {
@@ -50,10 +51,20 @@ class HttpClient implements IHttp
             $agent .= " curl/" . $curlVersion["version"];
         }
         self::$userAgent = $agent;
+        // Bundled CA certificates, only used as a fallback when the system
+        // CA store is unavailable or cannot verify the API certificate.
         self::$certificateBundle = realpath(dirname(__FILE__) . '/../../ca-bundle.pem');
-        if (empty(self::$certificateBundle)) {
-            echo "WARN: Could not locate CA Bundle. Secure web requests will fail";
-        }
+    }
+
+    /**
+     * Use a specific CA certificate bundle (PEM format) to verify the API's
+     * TLS certificate instead of the system CA store.
+     *
+     * @param string|null $path Path to the bundle, or null to restore the default behaviour
+     */
+    public static function setCertificateBundle($path)
+    {
+        self::$customCertificateBundle = $path;
     }
 
     private $isSecure;
@@ -108,6 +119,32 @@ class HttpClient implements IHttp
 
     private function request($url, $authentication, $method, $data = null, $contentType = "application/xml")
     {
+        if (!empty(self::$customCertificateBundle)) {
+            return $this->execute($url, $authentication, $method, $data, $contentType, self::$customCertificateBundle);
+        }
+
+        try {
+            // Verify against the system CA store (curl / php.ini defaults).
+            return $this->execute($url, $authentication, $method, $data, $contentType, null);
+        } catch (ConnectionException $e) {
+            // If the system CA store is missing or can't verify the certificate, retry
+            // with the bundled CA certificates. A certificate failure happens during the
+            // TLS handshake, before the request is sent, so retrying cannot duplicate it.
+            if (!in_array($e->getCurlErrorNumber(), self::certificateErrors()) || empty(self::$certificateBundle)) {
+                throw $e;
+            }
+            return $this->execute($url, $authentication, $method, $data, $contentType, self::$certificateBundle);
+        }
+    }
+
+    private static function certificateErrors()
+    {
+        // 60: CURLE_PEER_FAILED_VERIFICATION / CURLE_SSL_CACERT, 77: CURLE_SSL_CACERT_BADFILE
+        return array(60, 77);
+    }
+
+    private function execute($url, $authentication, $method, $data, $contentType, $caBundle)
+    {
         $httpHeaders = array("Authorization: {$authentication->getEncodedValue()}");
 
         $curlHandle = \curl_init();
@@ -118,7 +155,9 @@ class HttpClient implements IHttp
         \curl_setopt($curlHandle, CURLOPT_RETURNTRANSFER, true);
         \curl_setopt($curlHandle, CURLOPT_TIMEOUT, 30);
         \curl_setopt($curlHandle, CURLOPT_HEADER, false);
-        \curl_setopt($curlHandle, CURLOPT_CAINFO, self::$certificateBundle);
+        if (!empty($caBundle)) {
+            \curl_setopt($curlHandle, CURLOPT_CAINFO, $caBundle);
+        }
         \curl_setopt($curlHandle, CURLOPT_USERAGENT, self::$userAgent);
         \curl_setopt($curlHandle, CURLOPT_CUSTOMREQUEST, $method);
         if ($method == 'PUT' || $method == 'POST') {
@@ -133,12 +172,24 @@ class HttpClient implements IHttp
 
         $result = \curl_exec($curlHandle);
         $curlInfo = \curl_getinfo($curlHandle);
+        $curlErrorNumber = \curl_errno($curlHandle);
+        $curlError = \curl_error($curlHandle);
+
+        \curl_close($curlHandle);
+
+        if ($curlErrorNumber !== 0) {
+            // No HTTP response was received (DNS, connection, timeout or TLS failure).
+            throw new ConnectionException(
+                "Unable to connect to the Esendex API: {$curlError} (curl error {$curlErrorNumber})",
+                0,
+                $curlInfo,
+                $curlErrorNumber
+            );
+        }
 
         $results = array();
         $results['data'] = $result;
         $results['statuscode'] = $curlInfo["http_code"];
-
-        \curl_close($curlHandle);
 
         if ($results['statuscode'] < 200 || $results['statuscode'] >= 300) {
             throw $this->getHttpException($results, $curlInfo);
@@ -177,8 +228,9 @@ class HttpClient implements IHttp
             case 503:
                 return new ServiceUnavailableException($error_message, $http_code, $info);
             default:
-                $error_message = "An unexpected error occurred processing the web request";
-                return new \Exception($error_message, $http_code);
+                $error_message = "An unexpected error occurred processing the web request (HTTP status {$http_code})"
+                    . (strlen($data) != 0 && $data != $http_code ? ": {$data}" : "");
+                return new HttpException($error_message, $http_code, $info);
         }
     }
 }
